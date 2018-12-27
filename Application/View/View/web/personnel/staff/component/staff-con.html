@@ -1,0 +1,44 @@
+
+<div>
+    <!--<div v-if="staffPage==0">-->
+        <div style="padding-bottom: 15px;">
+            <el-button @click="toAddStaff" icon="el-icon-circle-plus-outline" size="small" type="primary">新增员工</el-button>
+            <el-button icon="el-icon-upload" size="small" type="success">导 入</el-button>
+            <el-button icon="el-icon-download" size="small" type="success">导 出</el-button>
+        </div>
+        <el-tree
+                class="department-tree-bgcolor"
+                :data="departmentList"
+                accordion
+                @node-click="handleNodeClick">
+        </el-tree>
+        <div class="tree-right-table">
+            <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+                <el-tab-pane :label="'全部('+all+')'" name="3">
+                    <staff-list ref="listo"></staff-list>
+                </el-tab-pane>
+                <el-tab-pane :label="'正式('+formal+')'" name="1">
+                    <staff-list ref="lists"></staff-list>
+                </el-tab-pane>
+                <el-tab-pane :label="'试用('+trial+')'" name="4">
+                    <staff-list ref="listt"></staff-list>
+                </el-tab-pane>
+                <el-tab-pane :label="'离职('+departure+')'" name="2">
+                    <staff-list ref="listf"></staff-list>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
+    <!--</div>-->
+    <!--<div v-else-if="staffPage==1">-->
+        <!--<div style="padding-bottom: 30px;">-->
+            <!--<el-button @click="changeStaffPage(0)" icon="el-icon-back" size="small" type="primary">返 回</el-button>-->
+        <!--</div>-->
+        <!--<staff-add></staff-add>-->
+    <!--</div>-->
+    <!--<div v-else-if="staffPage==2">-->
+        <!--<div style="padding-bottom: 30px;">-->
+            <!--<el-button @click="changeStaffPage(0)" icon="el-icon-back" size="small" type="primary">返 回</el-button>-->
+        <!--</div>-->
+        <!--<staff-info :id="editId"></staff-info>-->
+    <!--</div>-->
+</div>

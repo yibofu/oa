@@ -1,0 +1,15 @@
+
+<!--<el-container>-->
+    <!--<el-header style="padding: 0; z-index: 2000;">-->
+        <!--<top-bar class="topbar-container"></top-bar>-->
+    <!--</el-header>-->
+    <!--<el-container>-->
+        <!--<el-aside style="width: 180px;">-->
+            <!--<side-bar class="sidebar-container"></side-bar>-->
+        <!--</el-aside>-->
+        <!--<el-main>-->
+            <!--&lt;!&ndash;<staff-con></staff-con>&ndash;&gt;-->
+            <!--<router-view></router-view>-->
+        <!--</el-main>-->
+    <!--</el-container>-->
+<!--</el-container>-->

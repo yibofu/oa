@@ -1,0 +1,19 @@
+<div v-if="isShow" class="add-position">
+    <div class="add-position-outline">
+        <div class="position-title" v-if="editWhich!=''">修 改 学 历</div>
+        <div class="position-title" v-else>新 增 学 历</div>
+        <div style="float: left; line-height: 40px; margin-right: 5px;"><span>学 历</span></div>
+        <div class="educations-input">
+            <el-input
+                    class="education-input"
+                    placeholder="请输入内容"
+                    v-model="educationInfo.name"
+                    clearable>
+            </el-input>
+        </div>
+        <div class="btn-place">
+            <el-button @click="checkBtn(0)">取 消</el-button>
+            <el-button @click="checkBtn(1)" type="primary">保 存</el-button>
+        </div>
+    </div>
+</div>

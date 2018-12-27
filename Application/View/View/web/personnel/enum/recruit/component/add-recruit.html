@@ -1,0 +1,19 @@
+<div v-if="isShow" class="add-position">
+    <div class="add-position-outline">
+        <div class="position-title" v-if="editWhich!=''">修 改 招 聘 平 台</div>
+        <div class="position-title" v-else>新 增 招 聘 平 台</div>
+        <div style="float: left; line-height: 40px; width: 60px;"><span>招聘平台</span></div>
+        <div class="recruits-input">
+            <el-input
+                    class="recruit-input"
+                    placeholder="请输入内容"
+                    v-model="sourceInfo.name"
+                    clearable>
+            </el-input>
+        </div>
+        <div class="btn-place">
+            <el-button @click="checkBtn(0)" type="warning">取 消</el-button>
+            <el-button @click="checkBtn(1)" type="primary">保 存</el-button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+.add-position{
+    width: 100%;
+    height:100%;
+    background-color: rgba(0,0,0,.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2000;
+}
+.add-position-outline{
+    margin: 0 auto;
+    margin-top: 10%;
+    width: 30%;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 5px;
+}
+.position-title{
+    width: 100%;
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+.recruits-input{
+    float: left;
+    width: 70%;
+    margin-bottom: 20px;
+}
+.recruit-input{
+    width: 100%;
+}
+.btn-place{
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+.btn-place button{
+    margin: 0 auto;
+}

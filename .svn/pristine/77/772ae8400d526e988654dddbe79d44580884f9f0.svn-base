@@ -1,0 +1,28 @@
+<?php
+/**
+ *格式化时间函数
+ *@param string	$formate 	时间格式,默认 Y-m-d H:i:s
+ *@param int $time	时间戳
+ *@return string	格式化后的时间	 
+ */
+function formateTime($time=null, $formate='Y-m-d H:i:s')
+{
+	$time = is_null($time) ? time() : $time;
+	return date($formate, $time);
+}
+
+
+/**
+ * 对用户的密码进行加密
+ * @param $password
+ * @param $encrypt //传入加密串，在修改密码时做认证
+ * @return array/password
+ */
+function password($password,$encrypt=''){
+    $pwd = array();
+    $pwd['encrypt'] = '';
+    $pwd['password'] = md5(md5(trim($password)).$pwd['encrypt']);
+    return $encrypt ? $pwd['password'] : $pwd;
+}
+
+

@@ -1,0 +1,309 @@
+<div>
+    <div class="top-con">
+        <div class="headerImg">
+            <img src="//m.360buyimg.com/babel/jfs/t25957/58/2061150145/91193/5d36770e/5bc35261Nee9800c4.jpg" alt="">
+        </div>
+        <div class="top-right">
+            <div class="top-right-in">
+                <div class="top-right-info">
+                    <img src="/Application/View/View/web/personnel/staff/images/card.png" alt="">
+                    <span>{{formInline.name}}</span>
+                </div>
+                <div class="top-right-info">
+                    <img src="/Application/View/View/web/personnel/staff/images/department.png" alt="">
+                    <span>{{formInline.department}}</span>
+                </div>
+                <div class="top-right-info">
+                    <img src="/Application/View/View/web/personnel/staff/images/telephone.png" alt="">
+                    <span>联系电话：</span>
+                    <span>{{formInline.telephone}}</span>
+                </div>
+                <div class="top-right-info">
+                    <img src="/Application/View/View/web/personnel/staff/images/clocked.png" alt="">
+                    <span>司龄：</span>
+                    <span>{{formInline.workYear}}年</span>
+                </div>
+            </div>
+            <el-button type="primary" class="edit-btn" @click="editBtn(0)" v-show="isDisabled">编 辑</el-button>
+            <el-button type="primary" class="edit-btn" @click="editBtn(1)" v-show="!isDisabled">保 存</el-button>
+            <el-button class="edit-btns" @click="editBtn(2)" v-show="!isDisabled">取 消</el-button>
+        </div>
+    </div>
+    <el-tabs v-model="activeNameInfo" type="card" @tab-click="handleClickInfo">
+        <el-tab-pane label="基础信息" name="first">
+            <el-form label-position="right":inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item label="姓名">
+                    <el-input :disabled="isDisabled" v-model="formInline.name" placeholder="姓名"></el-input>
+                </el-form-item>
+                <el-form-item label="昵称">
+                    <el-input :disabled="isDisabled" v-model="formInline.uname" placeholder="昵称"></el-input>
+                </el-form-item>
+                <el-form-item label="工号">
+                    <el-input :disabled="isDisabled" v-model="formInline.unumber" placeholder="工号"></el-input>
+                </el-form-item>
+                <el-form-item label="性别">
+                    <el-select :disabled="isDisabled" v-model="formInline.sex" placeholder="请选择性别">
+                        <el-option label="男" value="0"></el-option>
+                        <el-option label="女" value="1"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="部门">
+                    <el-input :disabled="isDisabled" v-model="formInline.department" placeholder="部门"></el-input>
+                </el-form-item>
+                <el-form-item label="岗位">
+                    <el-input :disabled="isDisabled" v-model="formInline.posts" placeholder="岗位"></el-input>
+                </el-form-item>
+                <el-form-item label="导师">
+                    <el-input :disabled="isDisabled" v-model="formInline.leader" placeholder="导师"></el-input>
+                </el-form-item>
+                <el-form-item label="人员类别">
+                    <el-input :disabled="isDisabled" v-model="formInline.category" placeholder="人员类别"></el-input>
+                </el-form-item>
+                <el-form-item label="工作邮箱">
+                    <el-input :disabled="isDisabled" v-model="formInline.workEmail" placeholder="工作邮箱"></el-input>
+                </el-form-item>
+                <el-form-item label="手机号码">
+                    <el-input :disabled="isDisabled" v-model="formInline.telephone" placeholder="手机号码"></el-input>
+                </el-form-item>
+                <el-form-item label="微信号">
+                    <el-input :disabled="isDisabled" v-model="formInline.weixin" placeholder="微信号"></el-input>
+                </el-form-item>
+                <el-form-item label="个人邮箱">
+                    <el-input :disabled="isDisabled" v-model="formInline.ownEmail" placeholder="个人邮箱"></el-input>
+                </el-form-item>
+                <el-form-item label="出生日期">
+                    <el-col :span="20">
+                        <el-date-picker :disabled="isDisabled" type="date" placeholder="选择日期" v-model="formInline.birthday" style="width: 100%;"></el-date-picker>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="星座">
+                    <el-input :disabled="isDisabled" v-model="formInline.constellation" placeholder="星座"></el-input>
+                </el-form-item>
+                <el-form-item label="QQ号">
+                    <el-input :disabled="isDisabled" v-model="formInline.QQ" placeholder="QQ号"></el-input>
+                </el-form-item>
+                <el-form-item label="民族">
+                    <el-input :disabled="isDisabled" v-model="formInline.nation" placeholder="民族"></el-input>
+                </el-form-item>
+                <el-form-item label="婚姻状态">
+                    <el-input :disabled="isDisabled" v-model="formInline.married" placeholder="婚姻状态"></el-input>
+                </el-form-item>
+                <el-form-item label="籍贯">
+                    <el-input :disabled="isDisabled" v-model="formInline.native" placeholder="籍贯"></el-input>
+                </el-form-item>
+            </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="人事信息" name="second">
+            <el-form label-position="right":inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item label="学历">
+                    <el-input :disabled="isDisabled" v-model="formInline.education" placeholder="学历"></el-input>
+                </el-form-item>
+                <el-form-item label="毕业院校">
+                    <el-input :disabled="isDisabled" v-model="formInline.school" placeholder="毕业院校"></el-input>
+                </el-form-item>
+                <el-form-item label="兴趣爱好">
+                    <!--<el-input v-model="formInline.hobby" placeholder="兴趣爱好"></el-input>-->
+                    <el-input :disabled="isDisabled" type="textarea" v-model="formInline.hobby" placeholder="兴趣爱好"></el-input>
+                </el-form-item>
+                <el-form-item label="证件类型">
+                    <el-select :disabled="isDisabled" v-model="formInline.cardType" placeholder="请选择证件类型">
+                        <el-option label="居民身份证" value="0"></el-option>
+                        <el-option label="女" value="1"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="证件号码">
+                    <el-input :disabled="isDisabled" v-model="formInline.cardNumber" placeholder="证件号码"></el-input>
+                </el-form-item>
+                <el-form-item label="工龄(年)">
+                    <el-input disabled="isDisabled" v-model="formInline.workYear" placeholder="工龄(年)"></el-input>
+                </el-form-item>
+                <el-form-item label="职级">
+                    <el-input :disabled="isDisabled" v-model="formInline.rank" placeholder="职级"></el-input>
+                </el-form-item>
+                <el-form-item label="职位">
+                    <el-input :disabled="isDisabled" v-model="formInline.position" placeholder="职位"></el-input>
+                </el-form-item>
+                <el-form-item label="是否核心人才">
+                    <el-select :disabled="isDisabled" v-model="formInline.coreMembers" placeholder="是否核心人才">
+                        <el-option label="是" value="1"></el-option>
+                        <el-option label="否" value="0"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="招聘来源">
+                    <el-input :disabled="isDisabled" v-model="formInline.source" placeholder="招聘来源"></el-input>
+                </el-form-item>
+                <el-form-item label="入职日期">
+                    <el-col :span="20">
+                        <el-date-picker :disabled="isDisabled" type="date" placeholder="选择日期" v-model="formInline.hiredate" style="width: 100%;"></el-date-picker>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="转正日期">
+                    <el-col :span="20">
+                        <el-date-picker :disabled="isDisabled" type="date" placeholder="选择日期" v-model="formInline.correctionDate" style="width: 100%;"></el-date-picker>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="家庭地址">
+                    <el-input :disabled="isDisabled" v-model="formInline.homeAddress" placeholder="家庭地址"></el-input>
+                </el-form-item>
+                <el-form-item label="现居住地">
+                    <el-input :disabled="isDisabled" v-model="formInline.address" placeholder="现居住地"></el-input>
+                </el-form-item>
+                <el-form-item label="紧急联系人">
+                    <el-input :disabled="isDisabled" v-model="formInline.contactPerson" placeholder="紧急联系人"></el-input>
+                </el-form-item>
+                <el-form-item label="紧急联系人电话">
+                    <el-input :disabled="isDisabled" v-model="formInline.contactPersonPhone" placeholder="紧急联系人电话"></el-input>
+                </el-form-item>
+                <el-form-item label="简历附件">
+                    <el-input style="width: 60%;" :disabled="isDisabled" v-model="formInline.file.name" placeholder="简历附件"></el-input>
+                    <input v-if="isBtnShow" type="file" class="file">
+                    <el-button @click="downloadFile" v-if="isDisabled">下 载</el-button>
+                    <!--<el-upload-->
+                            <!--class="upload-demo"-->
+                            <!--ref="upload"-->
+                            <!--action="https://jsonplaceholder.typicode.com/posts/"-->
+                            <!--:on-preview="handlePreview"-->
+                            <!--:on-remove="handleRemove"-->
+                            <!--multiple="false"-->
+                            <!--:file-list="fileList"-->
+                            <!--:auto-upload="false">-->
+                        <!--<el-button v-if="isBtnShow" slot="trigger" size="small" type="primary">选取文件</el-button>-->
+                    <!--</el-upload>-->
+                </el-form-item>
+                <el-form-item label="上下发薪">
+                    <el-select :disabled="isDisabled" v-model="formInline.payType" placeholder="上下发薪">
+                        <el-option label="上发薪" value="0"></el-option>
+                        <el-option label="下发薪" value="1"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="积分">
+                    <el-input :disabled="isDisabled" v-model="formInline.integral" placeholder="积分"></el-input>
+                </el-form-item>
+                <el-form-item label="内购折扣">
+                    <el-input :disabled="isDisabled" v-model="formInline.discount" placeholder="内购折扣"></el-input>
+                </el-form-item>
+            </el-form>
+            <el-form v-for="(item, index) in contractNumber" label-position="right":inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item label="合同起始日">
+                    <el-col :span="20">
+                        <el-date-picker :disabled="isDisabled" type="date" placeholder="选择日期" v-model="formInline.contractStart[index]" style="width: 100%;"></el-date-picker>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="签订年限">
+                    <el-input :disabled="isDisabled" v-model="formInline.signedYears[index]" placeholder="签订年限"></el-input>
+                </el-form-item>
+                <el-form-item label="合同终止日">
+                    <el-input :disabled="isDisabled" v-model="formInline.contractEnd[index]" disabled="true" placeholder="合同终止日"></el-input>
+                </el-form-item>
+            </el-form>
+            <el-row class="distance" v-if="isBtnShow">
+                <img class="addContract" src="/Application/View/View/web/personnel/staff/images/addContract.png" alt="">
+                <el-button @click="addContract">续签合同</el-button>
+            </el-row>
+            <el-form label-position="right":inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item label="离职日期">
+                    <el-col :span="20">
+                        <el-date-picker :disabled="isDisabled" type="date" placeholder="选择日期" v-model="formInline.leaveDate" style="width: 100%;"></el-date-picker>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="离职类别">
+                    <el-input :disabled="isDisabled" v-model="formInline.leaveType" placeholder="离职类别"></el-input>
+                </el-form-item>
+                <el-form-item label="离职原因">
+                    <el-input :disabled="isDisabled" type="textarea" v-model="formInline.leaveReason" placeholder="离职原因"></el-input>
+                </el-form-item>
+            </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="社保信息" name="third">
+            <el-form label-position="right":inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item label="户口类型">
+                    <el-select :disabled="isDisabled" v-model="formInline.householdType" placeholder="请选择户口类型">
+                        <el-option label="农业户口" value="0"></el-option>
+                        <el-option label="非农业户口" value="1"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="社保缴纳地">
+                    <el-input :disabled="isDisabled" v-model="formInline.payLand" placeholder="社保缴纳地"></el-input>
+                </el-form-item>
+                <el-form-item label="缴纳账户">
+                    <el-input :disabled="isDisabled" v-model="formInline.payAccount" placeholder="缴纳账户"></el-input>
+                </el-form-item>
+                <el-form-item label="社保基数">
+                    <el-input :disabled="isDisabled" v-model="formInline.payBase" placeholder="社保基数"></el-input>
+                </el-form-item>
+                <el-form-item label="公积金基数">
+                    <el-input :disabled="isDisabled" v-model="formInline.fundBase" placeholder="公积金基数"></el-input>
+                </el-form-item>
+            </el-form>
+            <el-form label-position="right":inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item label="医疗">
+                    <el-input :disabled="isDisabled" v-model="formInline.medical" placeholder="医疗"></el-input>
+                </el-form-item>
+                <el-form-item label="养老">
+                    <el-input :disabled="isDisabled" v-model="formInline.pension" placeholder="养老"></el-input>
+                </el-form-item>
+                <el-form-item label="失业">
+                    <el-input :disabled="isDisabled" v-model="formInline.unemployment" placeholder="失业"></el-input>
+                </el-form-item>
+                <el-form-item label="公积金">
+                    <el-input :disabled="isDisabled" v-model="formInline.fund" placeholder="公积金"></el-input>
+                </el-form-item>
+                <el-form-item label="医疗(公)">
+                    <el-input :disabled="isDisabled" v-model="formInline.medicalTwo" placeholder="医疗(公)"></el-input>
+                </el-form-item>
+                <el-form-item label="养老(公)">
+                    <el-input :disabled="isDisabled" v-model="formInline.pensionTwo" placeholder="养老(公)"></el-input>
+                </el-form-item>
+                <el-form-item label="失业(公)">
+                    <el-input :disabled="isDisabled" v-model="formInline.unemploymentTwo" placeholder="失业(公)"></el-input>
+                </el-form-item>
+                <el-form-item label="工伤">
+                    <el-input :disabled="isDisabled" v-model="formInline.hurted" placeholder="工伤"></el-input>
+                </el-form-item>
+                <el-form-item label="生育">
+                    <el-input :disabled="isDisabled" v-model="formInline.birthed" placeholder="生育"></el-input>
+                </el-form-item>
+                <el-form-item label="公积金(公)">
+                    <el-input :disabled="isDisabled" v-model="formInline.fundTwo" placeholder="公积金(公)"></el-input>
+                </el-form-item>
+            </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="银行信息" name="fourth">
+            <el-form v-for="(item,index) in bankCardNumber" :key="index" label-position="right":inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item label="银行卡号">
+                    <el-input :disabled="isDisabled" v-model="formInline.bankCardNumber[index]" placeholder="银行卡号"></el-input>
+                </el-form-item>
+                <el-form-item label="开户行">
+                    <el-input :disabled="isDisabled" v-model="formInline.openBank[index]" placeholder="开户行"></el-input>
+                </el-form-item>
+                <el-form-item label="账户名称">
+                    <el-input :disabled="isDisabled" v-model="formInline.accountTitle[index]" placeholder="账户名称"></el-input>
+                </el-form-item>
+            </el-form>
+            <el-row>
+                <el-button @click="addBankCard" v-if="isBtnShow">添加卡号</el-button>
+                <el-button v-if="bankCardNumber>1" v-for="(item, index) in bankCardNumber-1" @click="deleteBankCard(index)">移除卡{{index+2}}</el-button>
+            </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="考勤信息" name="fifth">
+            <el-form label-position="right":inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item label="考勤制度">
+                    <el-input :disabled="isDisabled" v-model="formInline.attendanceSystem" placeholder="考勤制度"></el-input>
+                </el-form-item>
+                <el-form-item label="考勤班次">
+                    <el-input :disabled="isDisabled" v-model="formInline.attendance" placeholder="考勤班次"></el-input>
+                </el-form-item>
+                <el-form-item label="休息日方案">
+                    <el-input :disabled="isDisabled" v-model="formInline.restDayPlan" placeholder="休息日方案"></el-input>
+                </el-form-item>
+            </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="成长经历" name="sixth">
+            <div style="margin-left: 40%;height:180px;">
+                <el-steps direction="vertical" finish-status="process" :active="experienceNumber">
+                    <el-step v-for="(item, index) in experience" :key="index" :title="item.content" :description="item.date"></el-step>
+                </el-steps>
+            </div>
+        </el-tab-pane>
+    </el-tabs>
+</div>

@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <!--<title>Document</title>-->
+    <base href="/Application/Manage/View/">
+</head>
+<body>
+<div id="app">
+    <teamwork-list></teamwork-list>
+</div>
+<script src="/Application/Manage/View/vendor/requirejs/require.js"></script>
+<script src="/Application/Manage/View/common/config.js"></script>
+<script>
+    require(['teamwork/teamwork']);
+</script>
+</body>
+</html>

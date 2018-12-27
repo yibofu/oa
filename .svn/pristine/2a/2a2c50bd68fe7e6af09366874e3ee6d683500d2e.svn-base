@@ -1,0 +1,72 @@
+define([
+    'text!department/component/department-list.html',
+    'department/component/department-info',
+    'department/component/department-orgchart',
+
+    'css!department/component/department-list.css'
+], function(
+    tpl,
+    DepartmentInfo,
+    DepartmentOrgchart
+){
+    return {
+        template: tpl,
+        components: {
+            DepartmentInfo: DepartmentInfo,
+            DepartmentOrgchart: DepartmentOrgchart
+        },
+        data: function(){
+            return {
+                data2: [{
+                    id: 1,
+                    label: '梵几',
+                    children: [{
+                        id: 2,
+                        label: '总裁办'
+                    },{
+                        id: 3,
+                        label: '产品设计部'
+                    },{
+                        id: 4,
+                        label: '市场部'
+                    },{
+                        id: 5,
+                        label: '财务部'
+                    },{
+                        id: 6,
+                        label: 'IT部'
+                    },{
+                        id: 7,
+                        label: '门店',
+                        children: [{
+                            id: 8,
+                            label: '国子监店'
+                        }, {
+                            id: 9,
+                            label: '三里屯店'
+                        }, {
+                            id: 10,
+                            label: '杭州店'
+                        }, {
+                            id: 11,
+                            label: '深圳店'
+                        }, {
+                            id: 12,
+                            label: '上海店'
+                        }]
+                    }]
+                }],
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
+                tabPosition: 'right',
+            }
+        },
+        methods: {
+            resetChecked: function() {
+                this.$refs.tree.setCheckedKeys([]);
+            }
+        }
+    };
+});

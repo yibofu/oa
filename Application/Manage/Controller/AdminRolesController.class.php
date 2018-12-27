@@ -1,0 +1,314 @@
+<?php
+
+namespace Manage\Controller;
+
+use Common\Controller\BaseController;
+use Think\Page;
+header("content-type:text/html;charset=utf-8");
+
+class AdminRolesController extends BaseController
+{
+
+//    public function index(){
+//        $mapping = D("admin_role_auth_mappings");
+//        $pages = I("pages");
+//        $count = $mapping->table("oa_admin_role_auth_mappings as a")->join("oa_admin_auths as b on b.id = a.auth_id")
+//            ->join("oa_admin_roles as c on c.id = a.role_id")
+//            ->field('a.id,b.auth_name,c.role_name')
+//            ->where("")->order('a.id asc')->count();
+//        $page = new Page($count, $pages);
+//        $totalPages = ceil($count/$pages);
+//        $page->totalPages = $totalPages;
+//        $pageNum = I("post.pageNum");
+//        if($pageNum){
+//            $pageNum;
+//        }else{
+//            $pageNum = 1;
+//        }
+//        $offset = ($pageNum-1) * $pages;
+//        $adminRoles = D("AdminRoles");
+//        $list = $adminRoles->field('id,role_name')->where("")->order("id asc")->limit($offset,$pages)->select();
+//        foreach($list as $key=>$value){
+//            $roleid[] = $value["id"];
+//        }
+//        if($roleid){
+//            $mapping = D("admin_role_auth_mappings");
+//            $mapp = $mapping->field("id,role_id,auth_id")->where(array('role_id'=>array('in',$roleid)))->select();
+//            foreach($list as $k=>$v){
+//                foreach($mapp as $mk=>$mv){
+//                    if($mv["role_id"] == $v["id"]){
+//                        $list[$k]["auth_id"] = $mv["auth_id"];
+//                    }
+//                }
+//            }
+//            //遍历存到list里的auth_id
+//            foreach($list as $lk=>$lv){
+//                $authid[] = $lv["auth_id"];
+//            }
+//            $auth = D("AdminAuths");
+//            $authlist = $auth->field('id,auth_name')->where(array('id'=>array('in',$authid)))->select();
+//            foreach($list as $tk=>$tv){
+//                foreach($authlist as $ks=>$vs){
+//                    if($vs["id"] == $tv["auth_id"]){
+//                        $list[$tk]["auth_name"] = $vs["auth_name"];
+//                    }
+//                }
+//            }
+//        }
+//        $result = array(
+//            'page' => $page,
+//            'pageNum' => $pageNum,
+//            'result' => $list
+//        );
+//        if($list){
+//            $error = 0;
+//        }else{
+//            $error = 1;
+//        }
+//        self::jsons($error,$result);
+//    }
+
+
+    public function index(){
+        $pages = I("pages");
+        $adminRoles = D("AdminRoles");
+        $count = $adminRoles->field('id,role_name')->count();
+        $page = new Page($count, $pages);
+        $totalPages = ceil($count/$pages);
+        $page->totalPages = $totalPages;
+        $pageNum = I("post.pageNum");
+        if($pageNum){
+            $pageNum;
+        }else{
+            $pageNum = 1;
+        }
+        $offset = ($pageNum-1) * $pages;
+
+        $list = $adminRoles->field('id,role_name')->where("")->order("id asc")->limit($offset,$pages)->select();
+//        foreach($list as $key=>$value){
+//            $roleid[] = $value["id"];
+//        }
+//        if($roleid){
+//            $mapping = D("admin_role_auth_mappings");
+//            $mapp = $mapping->field("id,role_id,auth_id")->where(array('role_id'=>array('in',$roleid)))->select();
+//            foreach($list as $k=>$v){
+//                foreach($mapp as $mk=>$mv){
+//                    if($mv["role_id"] == $v["id"]){
+//                        $list[$k]["auth_id"] = $mv["auth_id"];
+//                    }
+//                }
+//            }
+//            //遍历存到list里的auth_id
+//            foreach($list as $lk=>$lv){
+//                $authid[] = $lv["auth_id"];
+//            }
+//            $auth = D("AdminAuths");
+//            $authlist = $auth->field('id,auth_name')->where(array('id'=>array('in',$authid)))->select();
+//            foreach($list as $tk=>$tv){
+//                foreach($authlist as $ks=>$vs){
+//                    if($vs["id"] == $tv["auth_id"]){
+//                        $list[$tk]["auth_name"] = $vs["auth_name"];
+//                    }
+//                }
+//            }
+//        }
+        $result = array(
+            'page' => $page,
+            'pageNum' => $pageNum,
+            'result' => $list
+        );
+        if($result){
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+        self::jsons($error,$result);
+    }
+
+    public function authMessage()
+    {
+        $adminauths = D('admin_auths');
+        $result = $adminauths->field('id,auth_name')->select();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        echo self::jsons($error, $result);
+    }
+
+//    //管理员角色表的角色增加
+//    public function add()
+//    {
+//        $data['role_name'] = I("post.rolename");
+//        $data['remarks'] = I("post.remarks");
+//        $data['create_time'] = formateTime();
+//        $roles = D("admin_roles");
+//        $datas = $roles->create($data);
+//        if ($datas) {
+//            $condition = $roles->add($datas);
+//            if ($condition) {
+//                $rolevalue = $roles->field('id')->where("role_name = '" . $data['role_name'] . "'")->find();
+//                $role_id = $rolevalue['id'];
+//                $auth_id = I("post.auth_id");
+//
+//                $mapping = D("admin_role_auth_mappings");
+//                $value['role_id'] = $role_id;
+//                $value['auth_id'] = $auth_id;
+//                $value['create_time'] = formateTime();
+//                foreach ($value['auth_id'] as $k => $v) {
+//                    $value['auth_id'] = $v;
+//                    $result = $mapping->add($value);
+//                }
+//            }
+//            if ($result) {
+//                $error = 0;
+//            } else {
+//                $error = 1;
+//            }
+//        }
+//        echo self::jsons($error, $result);
+//    }
+    //管理员角色表的角色增加
+    public function add()
+    {
+        $data['role_name'] = I("post.role_name");
+        $data['remarks'] = I("post.remarks");
+        $data['create_time'] = time();
+        $roles = D("admin_roles");
+        $datas = $roles->create($data);
+        if ($datas) {
+            $result = $roles->add($datas);
+            if ($result) {
+                $error = 0;
+            } else {
+                $error = 1;
+            }
+        }
+        echo self::jsons($error, $result);
+    }
+
+    public function check()
+    {
+        $id = I("post.id");
+        $adminRoles = D("AdminRoles");
+        $condition = $adminRoles->field('id,role_name')->where("id=" . $id)->find();
+        $roleId = $condition["id"];
+        $mapping = D("admin_role_auth_mappings");
+        //返回值里的role_id是角色id，auth_id是权限id
+        $result = $mapping->field('id,role_id,auth_id')->where("role_id=" . $roleId)->select();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        echo self::jsons($error, $result);
+    }
+
+    //管理员角色表的角色修改
+//    public function update()
+//    {
+//        $id = I("post.id");
+//        $data['role_name'] = I("post.rolename");
+//        $data['remarks'] = I("post.remarks");
+//        $roles = D("admin_roles");
+//        $datas = $roles->create($data);
+//        if ($datas) {
+//            $roles->where('id = ' . $id)->save($datas);
+//            $mapping = D("admin_role_auth_mappings");
+//            $list = $mapping->field('id,role_id,auth_id')->where("role_id=" . $id)->select();
+//            foreach ($list as $value) {
+//                 $str .=$value['auth_id'] . ',';
+//            }
+//            $authId = trim($str,',');
+//            $length = strlen($authId);
+//            if ($length == 1) {
+//                $where = 'auth_id=' . $authId;
+//            } else {
+//                $authId = array($id);
+//                $where = 'auth_id in(' . implode(',', $authId) . ')';
+//            }
+//            $data["auth_id"] = $authId;
+//            $datas = $mapping->create($data);
+//            $result = $mapping->where($where)->save($datas);
+//        }
+//        if($result){
+//            $error = 0;
+//        }else{
+//            $error = 1;
+//        }
+//        echo self::jsons($error,$result);
+//    }
+
+    public function update()
+    {
+        $id = I("post.id");
+        $data['role_name'] = I("post.role_name");
+        $data['remarks'] = I("post.remarks");
+        $roles = D("admin_roles");
+        $datas = $roles->create($data);
+        if ($datas) {
+            $result = $roles->where('id = ' . $id)->save($datas);
+        }
+        if($result){
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+        echo self::jsons($error,$result);
+    }
+
+
+    //管理员角色表的角色删除
+//    public function delete()
+//    {
+//        $id = I("post.id");
+//        $roles = D("admin_roles");
+//        $data["role_name"] = I("post.role_name");
+//        $data["remarks"] = I("post.remarks");
+//        $datas = $roles->create($data);
+//        if ($datas) {
+//            $roles->where('id = ' . $id)->save($datas);
+//
+//            $mapping = D("admin_role_auth_mappings");
+//            $list = $mapping->field('id,role_id,auth_id')->where("role_id=" . $id)->select();
+//            foreach ($list as $value) {
+//                $str .=$value['auth_id'] . ',';
+//            }
+//            $authId = trim($str,',');
+//            $length = strlen($authId);
+//            if ($length == 1) {
+//                $where = 'auth_id=' . $authId;
+//            } else {
+//                $authId = array($id);
+//                $where = 'auth_id in(' . implode(',', $authId) . ')';
+//            }
+//            $result = $mapping->where($where)->delete();
+//        }
+//        if($result){
+//            $error = 0;
+//        }else{
+//            $error = 1;
+//        }
+//        echo self::jsons($error,$result);
+//    }
+    public function delete()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $roles = D("admin_roles");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $roles->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+}

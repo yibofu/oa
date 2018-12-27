@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <!--<title>Document</title>-->
+    <base href="/Application/View/View/web/personnel/">
+</head>
+<body>
+<div id="app">
+    <main-page></main-page>
+</div>
+<script src="/Application/View/View/vendor/requirejs/require.js"></script>
+<script src="/Application/View/View/web/common/config.js"></script>
+<script>
+    require(['personnel/personnel']);
+</script>
+</body>
+</html>

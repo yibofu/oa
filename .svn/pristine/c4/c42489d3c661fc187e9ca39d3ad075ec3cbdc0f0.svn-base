@@ -1,0 +1,27 @@
+<div>
+    <div style="padding-bottom: 30px;">
+        <el-button>增 加</el-button>
+        <el-button>修 改</el-button>
+        <el-button>删 除</el-button>
+        <el-button @click="resetChecked">清空</el-button>
+    </div>
+    <el-tabs :tab-position="tabPosition">
+        <el-tab-pane label="部门列表">
+            <el-tree
+                    :data="data2"
+                    show-checkbox
+                    default-expand-all
+                    node-key="id"
+                    ref="tree"
+                    highlight-current
+                    :props="defaultProps">
+            </el-tree>
+            <div class="tree-right-table">
+                <department-info></department-info>
+            </div>
+        </el-tab-pane>
+        <el-tab-pane label="树形图">
+            <department-orgchart></department-orgchart>
+        </el-tab-pane>
+    </el-tabs>
+</div>

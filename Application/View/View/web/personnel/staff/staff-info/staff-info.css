@@ -1,0 +1,84 @@
+.top-con{
+    width: 100%;
+    height: 250px;
+    margin-bottom: 20px;
+}
+.headerImg{
+    width: 250px;
+    height: 100%;
+    float: left;
+    position: relative;
+    border: 1px solid #c0c4cc;
+}
+.headerImg img{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.top-right{
+    width: 100%;
+    height: 100%;
+    padding:20px 0 20px 300px;
+    box-sizing: border-box;
+    position: relative;
+}
+.top-right-in{
+    width:100%;
+    height:100%;
+}
+.top-right-info{
+    width: 100%;
+    height: 25%;
+    display: flex;
+    /*justify-content: center;*/
+    align-items: center;
+}
+.top-right-info img{
+    width: 36px;
+    height: 36px;
+    margin-right: 20px;
+}
+.top-right-info span{
+    font-size: 22px;
+    font-weight: bold;
+}
+.edit-btn{
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.edit-btns{
+    position: absolute;
+    top: 0;
+    right: 100px;
+}
+.distance{
+    margin-bottom: 20px;
+}
+.addContract{
+    width: 30px;
+    height: 30px;
+}
+.file{
+    position: absolute;
+    top:0;
+    left: 0;
+    width:100%;
+    height:100%;
+    opacity: 0;
+    cursor: pointer;
+}
+.city-color{
+    background-color: #f5f7fa;
+}
+#sex .el-select,#leader .el-select,#payAccount .el-select,#categoryType .el-select,#department .el-cascader,#birthday .el-col,
+#constellation .el-select,#nations .el-select,#married .el-select,#education .el-select,
+#cardType .el-select,#rank .el-select,#position .el-select,#coreMembers .el-select,
+#source .el-select,#hiredate .el-col,#correctionDate .el-col,#payType .el-select,
+#categoryType .el-select,#company .el-select,#contractStart .el-col,#leaveDate .el-col,
+#leaveType .el-select,#householdType .el-select,#socialStarting .el-date-editor,
+#fundStarting .el-date-editor,#attendance .el-select{
+    width: 100%;
+}

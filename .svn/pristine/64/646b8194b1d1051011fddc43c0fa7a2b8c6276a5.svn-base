@@ -1,0 +1,2 @@
+<script src="/Application/Manage/View/vendor/requirejs/require.js"></script>
+<script src="/Application/Manage/View/common/config.js"></script>

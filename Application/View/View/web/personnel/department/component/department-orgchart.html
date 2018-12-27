@@ -1,0 +1,26 @@
+<div>
+    <!--<div id="chart-container"></div>-->
+    <!--<TreeChart :json="treeData"></TreeChart>-->
+    <div class="tree">
+        <ul>
+            <li>
+                <a>{{treeData[0].label}}</a>
+                <ul v-if="treeData[0].children[0]">
+                    <li v-for="(item,index) in treeData[0].children" :key="index">
+                        <a>{{item.label}}<br>
+                            <span>部门领导：{{item.department_heads}}</span>
+                        </a>
+                        <ul v-if="item.children[0]">
+                            <li v-for="(items,indexs) in item.children" :key="indexs">
+                                <a>{{items.label}}<br>
+                                    <span>部门领导：{{items.department_heads}}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+

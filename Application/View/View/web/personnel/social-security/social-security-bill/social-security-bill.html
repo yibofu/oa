@@ -1,0 +1,65 @@
+<div>
+    <!--<div v-if="!isCheck">-->
+        <el-button @click="checkInfor(0)" icon="el-icon-circle-plus-outline" size="small" type="primary">新建月度</el-button>
+        <!--<el-button @click="checkInfor(1)">删 除</el-button>-->
+        <el-date-picker
+                size="small"
+                value-format="yyyy-MM"
+                v-model="month1"
+                type="month"
+                placeholder="起始月度">
+        </el-date-picker>
+        <span>-</span>
+        <el-date-picker
+                size="small"
+                value-format="yyyy-MM"
+                v-model="month2"
+                type="month"
+                placeholder="结束月度">
+        </el-date-picker>
+        <el-button @click="checkInfor(1)" icon="el-icon-search" size="small" type="primary">搜索</el-button>
+        <el-table
+                max-height="550"
+                size="mini"
+                :header-cell-style="tableHeaderColor"
+                border="true"
+                ref="multipleTables"
+                :data="tableData"
+                tooltip-effect="dark"
+                style="width: 60%; margin-top: 30px;">
+            <!--<el-table-column-->
+            <!--type="selection"-->
+            <!--width="55">-->
+            <!--</el-table-column>-->
+            <el-table-column
+                    align="center"
+                    prop="id"
+                    label="序号"
+                    width="150">
+            </el-table-column>
+            <el-table-column
+                    align="center"
+                    prop="name"
+                    label="月度台账"
+                    show-overflow-tooltip>
+            </el-table-column>
+            <el-table-column
+                    align="center"
+                    fixed="right"
+                    label="操作"
+                    width="200">
+                <template slot-scope="scope">
+                    <el-button @click="operationData(scope.row,0)" icon="el-icon-search" style="width: 50px;height: 20px;padding: 0;font-size: 12px;" type="primary">查看</el-button>
+                    <el-button @click="operationData(scope.row,2)" icon="el-icon-download" style="width: 50px;height: 20px;padding: 0;font-size: 12px;" type="success">导出</el-button>
+                    <el-button @click="operationData(scope.row,1)" icon="el-icon-delete" style="width: 50px;height: 20px;padding: 0;font-size: 12px;" type="danger">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div>
+            <add-social-security-bill ref="infor"></add-social-security-bill>
+        </div>
+    <!--</div>-->
+    <!--<div v-else>-->
+        <!--<social-security-bill-list ref="billInfor"></social-security-bill-list>-->
+    <!--</div>-->
+</div>

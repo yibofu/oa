@@ -1,0 +1,121 @@
+<?php
+namespace Manage\Controller;
+use Common\Controller\BaseController;
+use Think\Page;
+class TeamworkController extends BaseController{
+    //查看全部的方法
+    public function teamwork(){
+        if (I("emergency")) {
+            $map['emergency'] = I("emergency");
+        }
+        if (I("acceptancetime")) {
+            $map['acceptancetime'] = I("acceptancetime");
+        }
+        if (I("status")) {
+            $map['status'] = I("status");
+        }
+        if (I("operator_name")) {
+            $map['operator_name'] = I("operator_name");
+        }
+        $manage = D("manage");
+        $count = $manage->table("oa_manage as a")->join("oa_operator as b on b.id=a.operator_name")
+            ->field("a.id,a.demand_name,a.emergency,a.designatedPerson,b.name as operator_name,a.submitter,a.submittime,a.acceptancetime")
+            ->where($map)->count();
+
+        $page = new Page($count, 10);
+        $list =$manage->table("oa_manage as a")->join("oa_operator as b on b.id=a.operator_name")
+            ->field("a.id,a.demand_name,a.emergency,a.designatedPerson,b.name as operator_name,a.submitter,a.submittime,a.acceptancetime")
+            ->where($map)->limit($page->firstRow, $page->listRows)->select();
+        echo $manage->getLastsql();
+        $result = array(
+            'page' => $page,
+            'result' => $list
+        );
+        echo json_encode($result);
+    }
+
+    //增加工单的方法
+    public function add(){
+        $data['demand_name'] = I("post.demand_name");
+        $data['emergency'] = I("post.emergency");
+        $data['designatedPerson'] = I("post.designatedPerson");
+        $data['operator_name'] = I("post.operator_name");
+        $data['status'] = I("post.status");
+        $data['submitter'] = I("post.submitter");
+        $data['submittime'] = self::formateTime();
+        $data['acceptancetime'] = I("post.acceptancetime");
+        $data['describe'] = I("post.describe");
+        //上传文件
+        $data['files'] = $_FILES['files'];
+        $upload = new \Think\Upload();
+        $upload->maxSize = 3145728;
+        $upload->exts = array('jpg', 'png', 'jpeg','xlsx','txt','doc');
+        $upload->rootPath = './Public/Uploads/';
+        $info = $upload->upload();
+        if (!$info) {
+            $msg = $upload->getError();
+        } else {
+            $data['files'] = $info['files']['savepath'] . $info['files']['savename'];
+        }
+        $manage = D("manage");
+        $datas = $manage->create($data);
+        if ($datas) {
+            $result = $manage->add($datas);
+        }
+        echo json_encode($result);
+    }
+
+    //选中一条查看的方法
+    public function check(){
+        $id = I("get.id");
+        $manage = D("manage");
+        $result = $manage->field('id,demand_name,emergency,designatedPerson,operator_name,status,submitter,submittime,acceptancetime,describe')
+            ->where("id = ".$id)->find();
+        echo json_encode($result);
+    }
+
+    //修改数据的方法
+    public function update(){
+        $id = I("get.id");
+        $data['demand_name'] = I("post.demand_name");
+        $data['emergency'] = I("post.emergency");
+        $data['designatedPerson'] = I("post.designatedPerson");
+        $data['operator_name'] = I("post.operator_name");
+        $data['status'] = I("post.status");
+        $data['submitter'] = I("post.submitter");
+        $data['submittime'] = self::formateTime();
+        $data['acceptancetime'] = I("post.acceptancetime");
+        $data['describe'] = I("post.describe");
+        $manage = D("manage");
+
+        $files = $manage->field('picture')->where("id = " . $id)->find();
+        $fil = $files["files"];
+        $files = "/Public/Uploads/" . $fil;
+        if ($_FILES != '') {
+
+            $upload = new \Think\Upload();
+            $upload->maxSize = 3145728;
+            $upload->exts = array('jpg', 'gif', 'png', 'jpeg','xlsx','txt','doc');
+            $upload->rootPath = './Public/Uploads/';
+            $info = $upload->upload();
+            unlink($files);
+            if (!$info) {
+                $msg = $upload->getError();
+            } else {
+                $data['files'] = $info['files']['savepath'] . $info['files']['savename'];
+            }
+        }
+        $datas = $manage->create($data);
+        if ($datas) {
+            $result = $manage->where("id = ".$id)->save($datas);
+        }
+        echo json_encode($result);
+    }
+
+    //下拉框显示操作人姓名
+    public function operatorName(){
+        $operator = D("operator");
+        $result = $operator->field('id,name')->select();
+        echo json_encode($result);
+    }
+}

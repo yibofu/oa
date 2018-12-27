@@ -1,0 +1,10 @@
+编译方法：
+1、安装依赖
+cd oa/Application/View/achive-build
+npm install
+
+2、运行打包脚本
+npm run build:corly View/web
+
+3、打包第三方vendor库
+npm run build:vendor View/vendor

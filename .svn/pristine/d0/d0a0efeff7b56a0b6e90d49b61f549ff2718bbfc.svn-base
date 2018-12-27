@@ -1,0 +1,23 @@
+
+<el-container>
+    <el-header style="padding: 0; z-index: 2000;">
+        <top-bar class="topbar-container"></top-bar>
+    </el-header>
+    <el-container>
+        <el-aside style="width: 180px; height: 100%;">
+            <side-bar class="sidebar-container"></side-bar>
+        </el-aside>
+        <el-main>
+            <el-tabs v-model="theTab" type="card" closable @tab-remove="removeTab" @tab-click="toTheRouter">
+                <el-tab-pane
+                        v-for="(item, index) in editableTabs"
+                        :key="index"
+                        :label="item.name"
+                        :name="item.name"
+                >
+                </el-tab-pane>
+            </el-tabs>
+            <router-view></router-view>
+        </el-main>
+    </el-container>
+</el-container>

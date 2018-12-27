@@ -1,0 +1,302 @@
+<?php
+
+namespace Manage\Controller;
+
+use Common\Controller\BaseController;
+use Think\Upload;
+
+header("content-type:text/html;charset=utf-8");
+
+class OrganizationalStructureController extends BaseController
+{
+    //父类部门
+    public function index()
+    {
+        $organizationalStructure = D("OrganizationalStructure");
+        $result = $organizationalStructure->field("id,pid,department_name")->select();
+        var_dump($result);die;
+//        $tree = array();
+//        foreach($result as $item){
+//            if(isset($result[$item['pid']])){
+//                $result[$item['pid']]['son'][] = &$result[$item['id']];
+//            }else{
+//                $tree[] = &$result[$item['id']];
+//            }
+//        }
+        foreach($result as $key=>$value){
+            $arr[] = $value["id"];
+        }
+        $condition = $organizationalStructure->field("id,pid,department_name")->where(array('pid'=>array('IN',$arr)))->select();
+        foreach($result as $ks=>$vs){
+            foreach ($condition as $k=>$v){
+                if($vs["id"] == $v["pid"]){
+                    $con["fname"] = $vs["department_name"];
+                    $con["sname"] = $v["department_name"];
+                }
+            }
+        }
+        var_dump($con);
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+
+
+
+    //查找所有门店
+    public function all(){
+        $organizationalStructure = D("OrganizationalStructure");
+        $result = $organizationalStructure->field("id,pid,department_name,department_number,department_heads,setup_time")->select();
+        foreach ($result as &$val) {
+            $val['setup_time'] = date('Y-m-d H:i:s', $val['setup_time']);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //点击显示子类部门
+    public function subclassesDepartment()
+    {
+        $id = I("post.id");
+        $organizationalStructure = D("OrganizationalStructure");
+        $result = $organizationalStructure->field("id,pid,department_name")->where("pid=" . $id)->select();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //选择上级门店，不选默认为总店
+    public function shop()
+    {
+        $organizationalStructure = D("OrganizationalStructure");
+        $result = $organizationalStructure->field("id,pid,department_name")->select();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加门店
+    public function add()
+    {
+        $data['pid'] = I("post.pid");
+        $data['department_name'] = I("post.department_name");
+        $data['department_number'] = I("post.department_number");
+        $data['department_heads'] = I("post.department_heads");
+        $data['url'] = I("post.url");
+        $data['setup_time'] = strtotime(I("post.setup_time"));
+        $organizationalStructure = D("OrganizationalStructure");
+        $datas = $organizationalStructure->create($data);
+        if ($datas) {
+            $result = $organizationalStructure->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //上传文件接口
+    public function upload()
+    {
+        $upload = new \Think\Upload();
+        $upload->maxSize = 3145728 ;
+        $upload->exts = array('xls,xlsx');// 设置附件上传类型
+        $upload->rootPath = './Public/Uploads/';
+        $upload->saveName = time().rand(10000,99999);
+        $info = $upload->upload();
+        if(!$info) {
+            $this->error($upload->getError());
+        }else{
+            $url = "./Public/Uploads/".$info['savepath'].$info['savename'];
+        }
+        if(!$url){
+            //文件不存在
+            $error = 2;
+        }
+        $organizationalStructure = D("OrganizationalStructure");
+        $list = $organizationalStructure->field("id,pid,department_name")->select();
+        foreach ($list as $key => $value) {
+            $fName[] = $value["department_name"];
+        }
+        $finename = $url;
+        $type = pathinfo($finename);
+        $type = strtolower($type["extension"]);
+        $type = $type === 'csv' ? $type : 'Excel2007';
+        Vendor('PHPExcel.PHPExcel');
+        $objReader = \PHPExcel_IOFactory::createReader($type);
+        $objPHPExcel = $objReader->load($finename);
+        $sheet = $objPHPExcel->getSheet(0);
+        // 取得总行数
+        $highestRow = $sheet->getHighestRow();
+        // 取得总列数
+        $highestColumn = $sheet->getHighestColumn();
+        //循环读取excel文件,读取一条,插入一条
+        $data = array();
+        //从第一行开始读取数据
+        for ($i = 2; $i <= $highestRow; $i++) {
+            //从A列读取数据
+            for ($j = 'A'; $j <= $highestColumn; $j++) {
+                if ($j == 'E') {
+
+                    $data[$i][] = gmdate("Y-m-d H:i:s", \PHPExcel_Shared_Date::ExcelToPHP($objPHPExcel->getActiveSheet()->getCell("$j$i")->getValue()));
+
+                } else {
+                    $data[$i][] = $objPHPExcel->getActiveSheet()->getCell("$j$i")->getValue();
+                }
+                if ($j == "A") {
+                    //得到父类店铺的名称，转换成父类的id，然后存到数据库的pid
+                    $arr[$i] = $objPHPExcel->getActiveSheet()->getCell("$j$i")->getValue();
+                    foreach ($arr as $value) {
+
+                        $parentName = $organizationalStructure->field("id,pid,department_name")->where("department_name=" . "'" . $value . "'")->select();
+                        foreach ($parentName as $pk => $pv) {
+                            if ($data[$i]["D"] == NULL) {
+                                $data[$i]["D"] = "0";
+                            } else {
+                                $data[$i]["D"] = $pv["id"];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        foreach ($data as $key => $value) {
+            $con["department_number"] = strval($value["0"]);
+            $con["department_name"] = $value["1"];
+            $con["department_heads"] = $value["2"];
+            $con["pid"] = $value["3"];
+            $con["setup_time"] = strtotime($value["4"]);
+            $con["url"] = $url;
+            $datas = $organizationalStructure->create($con);
+            $result = $organizationalStructure->add($datas);
+        }
+
+        $result = array(
+            "url"=>$url,
+            "result"=>$result
+        );
+
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //选中一条查看的方法
+    public function check()
+    {
+        $id = I("post.id");
+        $organizationalStructure = D("OrganizationalStructure");
+        $result = $organizationalStructure->field("id,pid,department_name,department_number,department_heads,setup_time")
+            ->where("id = " . $id)->find();
+        $result['setup_time'] = date('Y-m-d', $result['setup_time']);
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改数据的方法
+    public function update()
+    {
+        $id = I("post.id");
+        $data['department_name'] = I("post.department_name");
+        $data['department_number'] = I("post.department_number");
+        $data['department_heads'] = I("post.department_heads");
+        $data['url'] = I("post.url");
+        $data['setup_time'] = strtotime(I("post.setup_time"));
+        $organizationalStructure = D("OrganizationalStructure");
+        $datas = $organizationalStructure->create($data);
+        if ($datas) {
+            $result = $organizationalStructure->where("id = " . $id)->save($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+
+    //删除方法
+    public function delete()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $organizationalStructure = D("OrganizationalStructure");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $organizationalStructure->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //导出
+    public function export(){
+        $organizationalStructure = D("OrganizationalStructure");
+        $result = $organizationalStructure->table("oa_organizational_structure as a")->join("left join oa_organizational_structure as b on a.pid=b.id")
+            ->field("a.id,b.department_name as pname,a.department_name,a.department_number,a.department_heads,a.setup_time,a.url")
+            ->select();
+        if($result){
+            $field = array(
+                'A' => array('department_number', '部门编码'),
+                'B' => array('department_name', '部门名称'),
+                'C' => array('department_heads', '部门领导'),
+                'D' => array('pname', '上级分类'),
+                'E' => array(date("Y-m-d H:i:s",'setup_time'), '成立日期')
+            );
+            phpExcelList($field, $result, '组织架构表' . date('Y-m-d'));
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+         self::jsons($error,$result);
+    }
+
+    //下载接口
+    public function download()
+    {
+        $id = I("post.id");
+        if ($id !== "") {
+            $organizationalStructure = D("OrganizationalStructure");
+            $file = $organizationalStructure->field('id,url')->where("id=" . $id)->find();
+            $fileUrls = $file["url"];
+            $result = $_SERVER['SERVER_NAME'] . $fileUrls;
+            if ($fileUrls) {
+                $error = 0;
+            } else {
+                $error = 1;
+            }
+        }
+        self::jsons($error, $result);
+    }
+}

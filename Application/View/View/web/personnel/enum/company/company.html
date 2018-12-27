@@ -1,0 +1,44 @@
+<div>
+    <el-button @click="checkInfor(0)" icon="el-icon-circle-plus-outline" size="small" type="primary">新 增</el-button>
+    <el-button @click="checkInfor(1)" icon="el-icon-delete" size="small" type="danger">删 除</el-button>
+    <el-table
+            max-height="550"
+            size="mini"
+            :header-cell-style="tableHeaderColor"
+            border="true"
+            ref="multipleTables"
+            :data="tableData"
+            tooltip-effect="dark"
+            style="width: 60%; margin-top: 30px;">
+        <el-table-column
+                align="center"
+                type="selection"
+                width="55">
+        </el-table-column>
+        <el-table-column
+                align="center"
+                prop="id"
+                label="合同公司编号"
+                width="150">
+        </el-table-column>
+        <el-table-column
+                align="center"
+                prop="name"
+                label="合同公司"
+                show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+                align="center"
+                fixed="right"
+                label="操作"
+                width="150">
+            <template slot-scope="scope">
+                <el-button @click="operationData(scope.row,0)" icon="el-icon-edit" style="width: 50px;height: 20px;padding: 0;font-size: 12px;" type="warning">修改</el-button>
+                <el-button @click="operationData(scope.row,1)" icon="el-icon-delete" style="width: 50px;height: 20px;padding: 0;font-size: 12px;" type="danger">删除</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <div>
+        <add-company ref="infor"></add-company>
+    </div>
+</div>

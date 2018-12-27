@@ -1,0 +1,54 @@
+<div>
+    <el-button @click="checkInfo(0)" icon="el-icon-circle-plus-outline" size="small" type="primary">新 增</el-button>
+    <el-button @click="checkInfo(1)" icon="el-icon-delete" size="small" type="danger">删 除</el-button>
+    <el-table
+            max-height="550"
+            size="mini"
+            :header-cell-style="tableHeaderColor"
+            border="true"
+            ref="multipleTable"
+            :data="tableData"
+            tooltip-effect="dark"
+            style="width: 50%; margin-top: 30px;">
+        <el-table-column
+                align="center"
+                type="selection"
+                width="55">
+        </el-table-column>
+        <el-table-column
+                align="center"
+                prop="id"
+                label="职位编号"
+                width="120">
+        </el-table-column>
+        <el-table-column
+                align="center"
+                prop="name"
+                label="职位名称"
+                :filters="positionName"
+                :filter-method="filterHandler"
+                width="120">
+        </el-table-column>
+        <el-table-column
+                align="center"
+                prop="department_name"
+                label="所属部门"
+                :filters="departmentName"
+                :filter-method="filterHandler"
+                show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+                align="center"
+                fixed="right"
+                label="操作"
+                width="150">
+            <template slot-scope="scope">
+                <el-button @click="operationData(scope.row,0)" icon="el-icon-edit" style="width: 50px;height: 20px;padding: 0;font-size: 12px;" type="warning">修改</el-button>
+                <el-button @click="operationData(scope.row,1)" icon="el-icon-delete" style="width: 50px;height: 20px;padding: 0;font-size: 12px;" type="danger">删除</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <div>
+        <add-position ref="info"></add-position>
+    </div>
+</div>

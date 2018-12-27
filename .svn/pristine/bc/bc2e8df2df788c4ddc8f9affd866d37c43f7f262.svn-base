@@ -1,0 +1,74 @@
+define([
+    'text!department/component/department-info.html',
+
+    'css!department/component/department-info.css'
+], function(
+    tpl,
+    DepartmentInfo
+){
+    return {
+        template: tpl,
+        data: function(){
+            return {
+                ruleForm: {
+                    departmentNumber: '',
+                    departmentName: '',
+                    departmentLeader: '',
+                    departmentUplevel: '',
+                    date1: '',
+                    date2: '',
+                    delivery: false,
+                },
+                departments: [
+                    {id: 1, departmentNumber: 1, name: '梵几'},
+                    {id: 2, departmentNumber: 2, name: '总裁办'},
+                    {id: 3, departmentNumber: 3, name: '产品设计部'},
+                    {id: 4, departmentNumber: 4, name: '市场部'},
+                    {id: 5, departmentNumber: 5, name: '财务部'},
+                    {id: 6, departmentNumber: 6, name: 'IT部'},
+                    {id: 7, departmentNumber: 7, name: '门店'},
+                    {id: 8, departmentNumber: 8, name: '国子监店'},
+                    {id: 9, departmentNumber: 9, name: '三里屯店'},
+                    {id: 10, departmentNumber: 10, name: '杭州店'},
+                    {id: 11, departmentNumber: 11, name: '深圳店'},
+                    {id: 12, departmentNumber: 12, name: '上海店'},
+                ],
+                rules: {
+                    departmentNumber: [
+                        { required: true, message: '请输入部门编号', trigger: 'blur' },
+                    ],
+                    departmentName: [
+                        { required: true, message: '请输入部门名称', trigger: 'blur' },
+                    ],
+                    departmentLeader: [
+                        { required: true, message: '请输入部门领导名', trigger: 'blur' },
+                    ],
+                    departmentUplevel: [
+                        { required: true, message: '请选择上级部门', trigger: 'change' },
+                    ],
+                    date1: [
+                        { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
+                    ],
+                    date2: [
+                        { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
+                    ],
+                }
+            }
+        },
+        methods: {
+            submitForm: function(formName) {
+                this.$refs[formName].validate(function(valid){
+                    if (valid) {
+                        alert('submit!');
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            resetForm: function(formName) {
+                this.$refs[formName].resetFields();
+            }
+        }
+    };
+});

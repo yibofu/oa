@@ -1,0 +1,1601 @@
+<?php
+
+namespace Manage\Controller;
+
+use Common\Controller\BaseController;
+use Think\Page;
+use Think\Upload;
+
+class BasicInformationController extends BaseController
+{
+    //显示基本的信息
+    public function index(){
+        $departmentId = I("post.department_id");
+        $pages = I("pages");
+        $basicInformation = D("BasicInformation");
+        if($departmentId == ""){
+            $count = $basicInformation->table("oa_basic_information as a")->join("oa_department as b on b.id=a.department_id")
+                ->field("a.id,a.name,a.unumber,b.name as department,a.telephone,a.workEmail")->count();
+        }else{
+            $count = $basicInformation->table("oa_basic_information as a")->join("oa_department as b on b.id=a.department_id")
+                ->field("a.id,a.name,a.unumber,b.name as department,a.telephone,a.workEmail")->where("department_id=".$departmentId)->count();
+        }
+        $page = new Page($count, $pages);
+        $totalPages = ceil($count / $pages);
+        $page->totalPages = $totalPages;
+        $pageNum = I("post.pageNum");
+        if ($pageNum) {
+            $pageNum;
+        } else {
+            $pageNum = 1;
+        }
+        $offset = ($pageNum - 1) * $pages;
+        if($departmentId == ""){
+            $list = $basicInformation->table("oa_basic_information as a")->join("oa_department as b on b.id=a.department_id")
+                ->field("a.id,a.name,a.unumber,b.name as department,a.telephone,a.workEmail")->limit($offset, $pages)->select();
+        }else{
+            $list = $basicInformation->table("oa_basic_information as a")->join("oa_department as b on b.id=a.department_id")
+                ->field("a.id,a.name,a.unumber,b.name as department,a.telephone,a.workEmail")->where("department_id=".$departmentId)->limit($offset, $pages)->select();
+        }
+        $result = array(
+            'page' => $page,
+            'pageNum' => $pageNum,
+            'result' => $list
+        );
+        if($result){
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+        self::jsons($error,$result);
+    }
+
+    //显示员工状态
+    public function personnelStatus(){
+        $personnerStatus = D("PersonnelStatus");
+        $list = $personnerStatus->field('id,name')->select();
+        $basicInformation = D("BasicInformation");
+        $statusNum = $basicInformation->field('id,status_id')->group('status_id')->select();
+        foreach ($list as $k => $val) {
+            foreach ($statusNum as $key => $value) {
+                $statusClass["status"] = $value["status_id"];
+                $number = $basicInformation->field("status_id")->where("status_id=" . $statusClass["status"])->count();
+                $statusCount[$statusClass["status"]] = $number;
+                if ($val['id'] == $value['status_id']) {
+                    $list[$k]['statusCount'] = $statusCount[$statusClass["status"]];
+                }
+            }
+        }
+        if($list){
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+        self::jsons($error,$list);
+    }
+
+    //增加员工状态
+    public function addPersonnelStatus(){
+        $data["name"] = I("post.name");
+        $personnerStatus = D("PersonnelStatus");
+        $datas = $personnerStatus->create($data);
+        if ($datas) {
+            $result = $personnerStatus->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改员工状态
+    public function updatePersonnelStatus(){
+        $id = I("post.id");
+        $data["name"] = I("post.name");
+        $personnerStatus = D("PersonnelStatus");
+        $datas = $personnerStatus->create($data);
+        if ($datas) {
+            $result = $personnerStatus->where("id=".$id)->save($datas);
+        }
+        if ($result || $result == "") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //删除员工状态
+    public function deletePersonnelStatus(){
+        $id = I("post.id");
+        $length = strlen($id);
+        $personnerStatus = D("PersonnelStatus");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $personnerStatus->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //基础信息
+    public function Basic()
+    {
+        $id = I("post.id");
+        $basicInformation = D("BasicInformation");
+        $list = $basicInformation->table("oa_basic_information as a")->join("oa_organizational_structure as b on b.id=a.department_id")
+            ->join("oa_category as d on d.id=a.category_id")
+            ->field("a.id,a.name,a.uname,a.unumber,a.sex,b.department_name as departmentName,a.leader,d.name as category,a.workEmail,a.telephone,a.weixin,a.ownEmail,a.birthday,a.constellation,a.qq,a.national,a.married,a.native,a.photo")
+            ->where("id=" . $id)->find();
+        $list['sex'] = $list['sex'] == 0 ? '女' : '男';
+        //查出所有的id，页面点击下一页的时候显示下一个人的信息
+        $next = $basicInformation->field("id,name")->select();
+        $result = array(
+            'result' => $list,
+            'next' => $next
+        );
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加基础信息
+    public function addBasic()
+    {
+        $data['name'] = I("post.name");
+        $data['uname'] = I("post.uname");
+        $data['unumber'] = I("post.unumber");
+        //获取的
+        $data['department_id'] = I("post.department");
+        $data['leader'] = I("post.leader");
+        //获取的是ID
+        $data['category_id'] = I("post.category");
+        $data['workEmail'] = I("post.workEmail");
+        $data['telephone'] = I("post.telephone");
+        $data['weixin'] = I("post.weixin");
+        $data['ownEmail'] = I("post.ownEmail");
+        $data['birthday'] = I("post.birthday");
+        $data['constellation'] = I("post.constellation");
+        $data['qq'] = I("post.qq");
+        $data['national'] = I("post.national");
+        $data['married'] = I("post.married");
+        $data['native'] = I("post.native");
+        $data['photo'] = I("post.photo");
+        $data['status_id'] = I("post.status");
+        $basicInformation = D("BasicInformation");
+        $datas = $basicInformation->create($data);
+        if ($datas) {
+            $result = $basicInformation->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //上传照片接口
+    public function uploadPhoto()
+    {
+        $upload = new \Think\Upload();
+        $upload->maxSize = 3145728;
+        $upload->exts = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+        $upload->rootPath = './Public/Uploads/photo/';
+        $upload->saveName = array('uniqid', mt_rand(1, 999999) . '_' . md5(uniqid()));
+        $upload->subName = array('date', 'Ymd');
+        $info = $upload->upload();
+        if (!$info) {
+            $this->error($upload->getError());
+        } else {
+            $data["file"] = "/Public/Uploads/photo/" . $info['savepath'] . $info['savename'];
+        }
+        if ($data) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $data);
+    }
+
+    //修改基础信息
+    public function updateBasic()
+    {
+        $id = I("post.id");
+        $data['name'] = I("post.name");
+        $data['uname'] = I("post.uname");
+        $data['unumber'] = I("post.unumber");
+        //获取的
+        $data['department_id'] = I("post.department");
+        //获取的是Id
+        $data['posts_id'] = I("post.posts");
+        $data['leader'] = I("post.leader");
+        //获取的是ID
+        $data['category_id'] = I("post.category");
+        $data['workEmail'] = I("post.workEmail");
+        $data['telephone'] = I("post.telephone");
+        $data['weixin'] = I("post.weixin");
+        $data['ownEmail'] = I("post.ownEmail");
+        $data['birthday'] = I("post.birthday");
+        $data['constellation'] = I("post.constellation");
+        $data['qq'] = I("post.qq");
+        $data['national'] = I("post.national");
+        $data['married'] = I("post.married");
+        $data['native'] = I("post.native");
+        $data['photo'] = I("post.photo");
+        $data['status_id'] = I("post.status");
+        $basicInformation = D("BasicInformation");
+        $datas = $basicInformation->create($data);
+        if ($datas) {
+            $result = $basicInformation->where("id = " . $id)->save($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //下拉框显示人员类别
+    public function category()
+    {
+        $category = D("Category");
+        $result = $category->field('id,name')->select();
+        if ($result || $result=="") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加人员类别
+    public function addCategory()
+    {
+        $data["name"] = I("post.name");
+        $category = D("Category");
+        $datas = $category->create($data);
+        if ($datas) {
+            $result = $category->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改人员类别
+    public function updateCategory()
+    {
+        $id = I("post.id");
+        $data["name"] = I("post.name");
+        $category = D("Category");
+        $datas = $category->create($data);
+        if ($datas) {
+            $result = $category->where("id = " . $id)->save($datas);
+        }
+        if ($result || $result == "") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+
+    }
+
+    //删除人员类别
+    public function deleteCategory()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $category = D("Category");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $category->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //显示人事信息数据
+    public function personnel()
+    {
+        $id = I("post.id");
+        $personnelInformation = D("PersonnelInformation");
+        $list = $personnelInformation->table("oa_personnel_information as a")->join("oa_education as b on b.id=a.education_id")
+            ->join("oa_card as c on c.id=a.cardType_id")
+            ->join("oa_rank as d on d.id=a.rank_id")->join("oa_position as e on e.id=a.position_id")->join("oa_source as f on f.id=a.source_id")
+            ->join("oa_contract_renewal as g on g.bid=a.id")->join("oa_leave_type as h on h.id=a.leaveType_id")
+            ->field("a.id,a.bid,b.name as educationName,a.school,a.hobby,c.name as cardName,a.cardNumber,a.workYear,d.name as rankName,
+            e.name as positionNamw,a.coreMembers,f.name as sourceNamw,a.hiredate,a.correctionDate,a.homeAddress,a.address,
+            a.contactPerson,a.contactPersonPhone,a.file,a.payType,a.integral,a.discount,a.contractStart,a.signedYears,a.contractEnd,
+            a.isRenewal_id,h.name as leaveTypeName,a.leaveReason,a.referees")
+            ->where("bid=" . $id)->find();
+
+        //返回是否续签的字段，0为否，1为是，如果为1就显示续签的时间
+        $isRenewal = $list["isRenewal_id"];
+
+        $list['hiredate'] = date('Y-m-d', $list['hiredate']);
+        $list['correctionDate'] = date('Y-m-d', $list['correctionDate']);
+        $list['contractStart'] = date('Y-m-d', $list['contractStart']);
+        $list['contractEnd'] = date('Y-m-d', $list['contractEnd']);
+        $list['leaveDate'] = date('Y-m-d', $list['leaveDate']);
+        $result = array(
+            'isRenewal' => $isRenewal,
+            'result' => $list
+        );
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加人事信息
+    public function addPersonnel()
+    {
+        //传递过来id，来保存是属于谁的人事信息
+        $data['bid'] = I("post.id");
+        //保存学历id，链接学历表
+        $data['education_id'] = I("post.education");
+        $data['school'] = I("post.school");
+        $data['hobby'] = I("post.hobby");
+        //获取的是Id
+        $data['cardType_id'] = I("post.cardType");
+        $data['cardNumber'] = I("post.cardNumber");
+        //获取的是ID
+        $data['workYear'] = I("post.workYear");
+        //链接职级表
+        $data['rank_id'] = I("post.rank_id");
+        //链接职位表
+        $data['position_id'] = I("post.position");
+        $data['coreMembers'] = I("post.coreMembers");
+        //招聘来源
+        $data['source_id'] = I("post.source_id");
+        $data['referees'] = I("post.referees");
+        $data['hiredate'] = I("post.hiredate");
+        $data['correctionDate'] = I("post.correctionDate");
+        $data['homeAddress'] = I("post.homeAddress");
+        $data['address'] = I("post.address");
+        $data['contactPerson'] = I("post.contactPerson");
+        $data['contactPersonPhone'] = I("post.contactPersonPhone");
+        $data['file'] = I("post.file");
+        $data['payType'] = I("post.payType");
+        $data['integral'] = I("post.integral");
+        $data['company_id'] = I("post.company");
+        $data['discount'] = I("post.discount");
+        $data['contractStart'] = I("post.contractStart");
+        $data['signedYears'] = I("post.signedYears");
+        $data['contractEnd'] = I("post.contractEnd");
+        $data['isRenewal_id'] = I("post.isRenewal");
+        $data['leaveDate'] = I("post.leaveDate");
+        $data['leaveType_id'] = I("post.leaveType");
+        $data['leaveReason'] = I("post.leaveReason");
+        $personnelInformation = D("PersonnelInformation");
+        $datas = $personnelInformation->create($data);
+        if ($datas) {
+            $result = $personnelInformation->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改人事信息
+    public function updatePersonnel()
+    {
+        //传递过来id，来保存是属于谁的人事信息
+        $data['bid'] = I("post.id");
+        //保存学历id，链接学历表
+        $data['education_id'] = I("post.education");
+        $data['school'] = I("post.school");
+        $data['hobby'] = I("post.hobby");
+        //获取的是Id
+        $data['cardType_id'] = I("post.cardType");
+        $data['cardNumber'] = I("post.cardNumber");
+        //获取的是ID
+        $data['workYear'] = I("post.workYear");
+        //链接职级表
+        $data['rank_id'] = I("post.rank");
+        //链接职位表
+        $data['position_id'] = I("post.position");
+        $data['coreMembers'] = I("post.coreMembers");
+        //招聘来源
+        $data['source_id'] = I("post.source");
+        $data['referees'] = I("post.referees");
+        $data['hiredate'] = I("post.hiredate");
+        $data['correctionDate'] = I("post.correctionDate");
+        $data['homeAddress'] = I("post.homeAddress");
+        $data['address'] = I("post.address");
+        $data['contactPerson'] = I("post.contactPerson");
+        $data['contactPersonPhone'] = I("post.contactPersonPhone");
+        $data['file'] = I("post.file");
+        $data['payType'] = I("post.payType");
+        $data['integral'] = I("post.integral");
+        $data['company_id'] = I("post.company");
+        $data['discount'] = I("post.discount");
+        $data['contractStart'] = I("post.contractStart");
+        $data['signedYears'] = I("post.signedYears");
+        $data['contractEnd'] = I("post.contractEnd");
+        $data['isRenewal_id'] = I("post.isRenewal");
+        $data['leaveDate'] = I("post.leaveDate");
+        $data['leaveType_id'] = I("post.leaveType");
+        $data['leaveReason'] = I("post.leaveReason");
+        $personnelInformation = D("PersonnelInformation");
+        $datas = $personnelInformation->create($data);
+        if ($datas) {
+            $result = $personnelInformation->where("bid = " . $data['bid'])->save($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //下拉选择学历
+    public function education()
+    {
+        $education = D("Education");
+        $result = $education->field("id,name")->select();
+        if ($result || $result=="") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加学历
+    public function addEducation()
+    {
+        $data["name"] = I("post.name");
+        $education = D("Education");
+        $datas = $education->create($data);
+        if ($datas) {
+            $result = $education->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改学历
+    public function updateEducation()
+    {
+        $id = I("post.id");
+        $data["name"] = I("post.name");
+        $education = D("Education");
+        $datas = $education->create($data);
+        if ($datas) {
+            $result = $education->where("id = " . $id)->save($datas);
+        }
+        if ($result || $result == "") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+
+    }
+
+    //删除学历
+    public function deleteEducation()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $education = D("Education");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $education->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //下拉选择证件
+    public function card()
+    {
+        $cardType = D("Card");
+        $result = $cardType->field("id,name")->select();
+        if ($result || $result=="") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加证件
+    public function addCard()
+    {
+        $data["name"] = I("post.name");
+        $cardType = D("Card");
+        $datas = $cardType->create($data);
+        if ($datas) {
+            $result = $cardType->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改证件
+    public function updateCard()
+    {
+        $id = I("post.id");
+        $data["name"] = I("post.name");
+        $cardType = D("Card");
+        $datas = $cardType->create($data);
+        if ($datas) {
+            $result = $cardType->where("id = " . $id)->save($datas);
+        }
+        if ($result || $result == "") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+
+    }
+
+    //删除证件
+    public function deleteCard()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $cardType = D("Card");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $cardType->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //下拉选择职级
+    public function rank()
+    {
+        $rank = D("Rank");
+        $result = $rank->field("id,name")->select();
+        if ($result || $result=="") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加职级
+    public function addRank()
+    {
+        $data["name"] = I("post.name");
+        $rank = D("Rank");
+        $datas = $rank->create($data);
+        if ($datas) {
+            $result = $rank->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改职级
+    public function updateRank()
+    {
+        $id = I("post.id");
+        $data["name"] = I("post.name");
+        $rank = D("Rank");
+        $datas = $rank->create($data);
+        if ($datas) {
+            $result = $rank->where("id = " . $id)->save($datas);
+        }
+        if ($result || $result == "") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //删除职级
+    public function deleteRank()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $rank = D("Rank");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $rank->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //下拉选择职位
+    public function position()
+    {
+        $position = D("Position");
+        $result = $position->table("oa_position as a")->join("oa_organizational_structure as b on b.id=a.oid")->field("a.id,a.name,a.oid,b.department_name")->select();
+        if ($result || $result=="") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加职位
+    public function addPosition()
+    {
+        $data["name"] = I("post.name");
+        $data["oid"] = I("post.oid");
+        $position = D("Position");
+        $datas = $position->create($data);
+        if ($datas) {
+            $result = $position->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改职位
+    public function updatePosition()
+    {
+        $id = I("post.id");
+        $data["name"] = I("post.name");
+        $data["oid"] = I("post.oid");
+        $position = D("Position");
+        $datas = $position->create($data);
+        if ($datas) {
+            $result = $position->where("id = " . $id)->save($datas);
+        }
+        if ($result || $result == "") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+
+    }
+
+    //删除职位
+    public function deletePosition()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $position = D("Position");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $position->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //下来选择招聘来源
+    public function source()
+    {
+        $source = D("Source");
+        $result = $source->field("id,name")->select();
+        if ($result || $result=="") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加招聘来源
+    public function addSource()
+    {
+        $data["name"] = I("post.name");
+        $source = D("Source");
+        $datas = $source->create($data);
+        if ($datas) {
+            $result = $source->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改招聘来源
+    public function updateSource()
+    {
+        $id = I("post.id");
+        $data["name"] = I("post.name");
+        $source = D("Source");
+        $datas = $source->create($data);
+        if ($datas) {
+            $result = $source->where("id = " . $id)->save($datas);
+        }
+        if ($result || $result == "") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+
+    }
+
+    //删除招聘来源
+    public function deleteSource()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $source = D("Source");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $source->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //下拉选择离职类别
+    public function leave()
+    {
+        $leave = D("LeaveType");
+        $result = $leave->field("id,name")->select();
+        if ($result || $result=="") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加人员类别
+    public function addLeave()
+    {
+        $data["name"] = I("post.name");
+        $leave = D("LeaveType");
+        $datas = $leave->create($data);
+        if ($datas) {
+            $result = $leave->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改人员类别
+    public function updateLeave()
+    {
+        $id = I("post.id");
+        $data["name"] = I("post.name");
+        $leave = D("LeaveType");
+        $datas = $leave->create($data);
+        if ($datas) {
+            $result = $leave->where("id = " . $id)->save($datas);
+        }
+        if ($result || $result == "") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+
+    }
+
+    //删除人员类别
+    public function deleteLeave()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $leave = D("LeaveType");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $leave->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+
+    //显示户口性质
+    public function householdType(){
+        $payland = D("PayLand");
+        $result = $payland->table("oa_payland as a ")->join("oa_household_type as b on b.id=a.householdType_id")
+            ->field("a.id,a.city,a.householdType_id,c.name as householdType")->select();
+        if($result || $result==""){
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+        self::jsons($error,$result);
+    }
+    //增加户口性质
+    public function addHouseholdType(){
+        //显示省市，前台插件拼接成省市字符串传递过来
+        $data["city"] = I("post.city");
+        $data["householdType_id"] = I("post.householdType");
+        $payland = D("PayLand");
+        $datas = $payland->create($data);
+        if($datas){
+            $result = $payland->add($datas);
+        }
+        if($result){
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+        self::jsons($error,$result);
+    }
+    //修改户口性质
+    public function updateHouseholdType(){
+        $id = I("post.id");
+        $data["city"] = I("post.city");
+        $data["householdType_id"] = I("post.householdType");
+        $payland = D("PayLand");
+        $datas = $payland->create($data);
+        if($datas){
+            $result = $payland->where("id=".$id)->save($datas);
+        }
+        if($result || $result == ""){
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+        self::jsons($error,$result);
+    }
+    //删除户口性质
+    public function deleteHouseholdType(){
+        $id = I("post.id");
+        $length = strlen($id);
+        $payland = D("PayLand");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $payland->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //显示方案
+    public function socialSecurityPlan(){
+        $socialSecurityPlanModel = D("SocialSecurityPlanModel");
+        $result = $socialSecurityPlanModel->field("id,city,householdType,medicalBase,medicalRatio,pensionBase,pensionRatio,hurtedBase,
+                    hurtedRatio,unemploymentBase,unemploymentRatio,birthedBase,birthedRatio,medicalRatioTwo,
+                    pensionRatioTwo,hurtedRatioTwo,unemploymentRatioTwo,birthedRatioTwo,
+                    effectiveDate,expiryDate,is_use")
+            ->select();
+        if($result || $result==""){
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+        self::jsons($error,$result);
+    }
+    //社保城市级联
+    public function cityLink(){
+        $city = I("post.city");
+        if($city){
+            $payland = D("PayLand");
+            $result = $payland->table("oa_payland as a ")->join("oa_household_type as b on b.id=a.householdType_id")
+                ->field("a.id,a.city,a.householdType_id,c.name as householdType")->where("a.city=".$city)->select();
+            if($result){
+                $error = 0;
+            }else{
+                $error = 1;
+            }
+        }
+        self::jsons($error,$result);
+    }
+    //增加社保方案
+    public function addSocialSecurityPlan(){
+        $data["city"] = I("post.city");//缴纳地
+        $data["householdType"] = I("post.householdType");//户口性质
+        $data["effectiveDate"] = I("post.effectiveDate");//生效日期
+        $data["expiryDate"] = I("post.expiryDate");//失效日期
+        $data["medicalBase"] = I("post.medicalBase");//医疗基数
+        $data["medicalRatio"] = I("post.medicalRatio");//医疗比例（个人）
+        $data["pensionBase"] = I("post.pensionBase");//养老基数
+        $data["pensionRatio"] = I("post.pensionRatio");//养老比例（个人）
+        $data["hurtedBase"] = I("post.hurtedBase");//工伤基数
+        $data["hurtedRatio"] = I("post.hurtedRatio");//工伤比例（个人）
+        $data["unemploymentBase"] = I("post.unemploymentBase");//失业基数
+        $data["unemploymentRatio"] = I("post.unemploymentRatio");//失业比例（个人）
+        $data["birthedBase"] = I("post.birthedBase");//生育基数
+        $data["birthedRatio"] = I("post.birthedRatio");//生育比例（个人）
+        $data["medicalRatioTwo"] = I("post.medicalRatioTwo");//医疗比例（公司）
+        $data["pensionRatioTwo"] = I("post.pensionRatioTwo");//养老比例（公司）
+        $data["hurtedRatioTwo"] = I("post.hurtedRatioTwo");//工伤比例（公司）
+        $data["unemploymentRatioTwo"] = I("post.unemploymentRatioTwo");//失业比例（公司）
+        $data["birthedRatioTwo"] = I("post.birthedRatioTwo");//生育比例（公司）
+        $data["num"] += 1;
+        $socialSecurityPlanModel = D("SocialSecurityPlanModel");
+        $datas = $socialSecurityPlanModel->create($data);
+        if($datas){
+            $result = $socialSecurityPlanModel->add($datas);
+        }
+        if($result){
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+        self::jsons($error,$result);
+    }
+
+    //修改社保方案（原来的数据不做修改，就是新增加一条）
+    public function updateSocialSecurityPlan(){
+        $data["city"] = I("post.city");//缴纳地
+        $data["householdType"] = I("post.householdType");//户口性质
+        $data["effectiveDate"] = I("post.effectiveDate");//生效日期
+        $data["expiryDate"] = I("post.expiryDate");//失效日期
+        $data["medicalBase"] = I("post.medicalBase");//医疗基数
+        $data["medicalRatio"] = I("post.medicalRatio");//医疗比例（个人）
+        $data["pensionBase"] = I("post.pensionBase");//养老基数
+        $data["pensionRatio"] = I("post.pensionRatio");//养老比例（个人）
+        $data["hurtedBase"] = I("post.hurtedBase");//工伤基数
+        $data["hurtedRatio"] = I("post.hurtedRatio");//工伤比例（个人）
+        $data["unemploymentBase"] = I("post.unemploymentBase");//失业基数
+        $data["unemploymentRatio"] = I("post.unemploymentRatio");//失业比例（个人）
+        $data["birthedBase"] = I("post.birthedBase");//生育基数
+        $data["birthedRatio"] = I("post.birthedRatio");//生育比例（个人）
+        $data["medicalRatioTwo"] = I("post.medicalRatioTwo");//医疗比例（公司）
+        $data["pensionRatioTwo"] = I("post.pensionRatioTwo");//养老比例（公司）
+        $data["hurtedRatioTwo"] = I("post.hurtedRatioTwo");//工伤比例（公司）
+        $data["unemploymentRatioTwo"] = I("post.unemploymentRatioTwo");//失业比例（公司）
+        $data["birthedRatioTwo"] = I("post.birthedRatioTwo");//生育比例（公司）
+        $data["num"] += 1;
+        $socialSecurityPlanModel = D("SocialSecurityPlanModel");
+        $datas = $socialSecurityPlanModel->create($data);
+        if($datas){
+            $result = $socialSecurityPlanModel->add($datas);
+            if($result){
+                $error = 0;
+            }else{
+                $error = 1;
+            }
+        }
+        self::jsons($error,$result);
+    }
+
+    //删除社保方案
+    public function deleteSocialSecurityPlan(){
+        $id = I("post.id");
+        $length = strlen($id);
+        $socialSecurityPlanModel = D("SocialSecurityPlanModel");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $socialSecurityPlanModel->where($where." and is_use != '1'")->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //显示社保信息
+    public function socialSecurityInformation()
+    {
+        $id = I("post.id");
+        $socialSecurityInformation = D("SocialSecurityInformation");
+        $result = $socialSecurityInformation->table("oa_social_security_information as a")
+            ->join("oa_payAccount as d on d.id=a.payAccount_id")
+            ->field("a.id,a.bid,b.name as householdType,a.payLand,a.payBase,a.foudBase,a.medical,a.pension,a.unemployment,a.fund,a.medicalTwo,a.pensionTwo,a.unemploymentTwo,a.hurted,a.birthed,a.fundTwo,d.name as payAccount")
+            ->where("bid=" . $id)->find();
+
+         $socialSecurityPlan = D("SocialSecurityPlan");
+         $list = $socialSecurityInformation->field("")->where("is_use = '1'")->find();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加社保信息
+    public function addSocialSecurityInformation(){
+        $data['bid'] = I("post.id");
+        $data['householdType_id'] = I("post.householdType");
+        $data['payLand'] = I("post.payLand");
+        $data['payAccount'] = I("post.payAccount");
+        $data['payBase'] = I("post.payBase");
+        $data['foudBase'] = I("post.foudBase");
+        $data['medical'] = I("post.medical");
+        $data['pension'] = I("post.pension");
+        $data['unemployment'] = I("post.unemployment");
+        $data['fund'] = I("post.fund");
+        $data['medicalTwo'] = I("post.medicalTwo");
+        $data['pensionTwo'] = I("post.pensionTwo");
+        $data['unemploymentTwo'] = I("post.unemploymentTwo");
+        $data['hurted'] = I("post.hurted");
+        $data['birthed'] = I("post.birthed");
+        $data['fundTwo'] = I("post.fundTwo");
+        $socialSecurityInformation = D("SocialSecurityInformation");
+        $datas = $socialSecurityInformation->create($data);
+        if ($datas) {
+            $result = $socialSecurityInformation->where("bid = " . $data["bid"])->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改社保信息
+    public function updateSocialSecurityInformation()
+    {
+        $id = I("post.id");
+        $data['householdType_id'] = I("post.householdType");
+        $data['payLand'] = I("post.payLand");
+        $data['payAccount'] = I("post.payAccount");
+        $data['payBase'] = I("post.payBase");
+        $data['foudBase'] = I("post.foudBase");
+        $data['medical'] = I("post.medical");
+        $data['pension'] = I("post.pension");
+        $data['unemployment'] = I("post.unemployment");
+        $data['fund'] = I("post.fund");
+        $data['medicalTwo'] = I("post.medicalTwo");
+        $data['pensionTwo'] = I("post.pensionTwo");
+        $data['unemploymentTwo'] = I("post.unemploymentTwo");
+        $data['hurted'] = I("post.hurted");
+        $data['birthed'] = I("post.birthed");
+        $data['fundTwo'] = I("post.fundTwo");
+        $socialSecurityInformation = D("SocialSecurityInformation");
+        $datas = $socialSecurityInformation->create($data);
+        if ($datas) {
+            $result = $socialSecurityInformation->where("bid = " . $id)->save($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //下拉显示户口信息
+    public function household()
+    {
+        $household = D("HouseholdType");
+        $result = $household->field("id,name")->select();
+        if ($result || $result=="") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加户口类型
+    public function addHousehold()
+    {
+        $data["name"] = I("post.name");
+        $household = D("HouseholdType");
+        $datas = $household->create($data);
+        if ($datas) {
+            $result = $household->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改户口类型
+    public function updateHousehold()
+    {
+        $id = I("post.id");
+        $data["name"] = I("post.name");
+        $household = D("HouseholdType");
+        $datas = $household->create($data);
+        if ($datas) {
+            $result = $household->where("id = " . $id)->save($datas);
+        }
+        if ($result || $result == "") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+
+    }
+
+    //删除户口类型
+    public function deleteHousehold()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $household = D("HouseholdType");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $household->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //下拉选择社保缴纳账户
+    public function payAccount(){
+        $payAccount = D("PayAccount");
+        $result = $payAccount->field("id,name")->select();
+        if ($result || $result=="") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+    //增加社保缴纳账户
+    public function addPayAccount(){
+        $data["name"] = I("post.name");
+        $payAccount = D("Payaccount");
+        $datas = $payAccount->create($data);
+        if ($datas) {
+            $result = $payAccount->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+    //修改社保缴纳账户
+    public function updatePayAccount(){
+        $id = I("post.id");
+        $data["name"] = I("post.name");
+        $payAccount = D("Payaccount");
+        $datas = $payAccount->create($data);
+        if ($datas) {
+            $result = $payAccount->where("id = " . $id)->save($datas);
+        }
+        if ($result || $result == "") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+    //删除社保缴纳账户
+    public function deletePayAccount(){
+        $id = I("post.id");
+        $length = strlen($id);
+        $payAccount = D("Payaccount");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $payAccount->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //显示银行信息
+    public function BankInformation(){
+        $id = I("post.id");
+        $bankInformation = D("BankInformation");
+        $result = $bankInformation->table("oa_bank_information as a")->join("oa_bank_title as b on b.id = a.accountTitle_id")
+            ->field("a.id,a.bid,a.openBank,a.bankCardNumber,a.name as accountTitle,a.isDefault")
+            ->where("bid=" . $id)->find();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //增加银行卡信息
+    public function addBankInformation(){
+        $data["bid"] = I("post.id");
+        $data["bankCardNumber"] = I("post.bankCardNumber");
+        $data["openBank"] = I("post.openBank");
+        $data["accountTitle_id"] = I("post.accountTitle_id");
+        $data["isDefault"] = I("post.isDefault");
+        $bankInformation = D("BankInformation");
+        $datas = $bankInformation->create($data);
+        if($datas){
+            $result = $bankInformation->add($datas);
+        }
+        if($result){
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+        self::jsons($error,$result);
+    }
+
+    //修改银行卡信息
+    public function updateBankInformation(){
+        $id = I("post.id");
+        $data["bankCardNumber"] = I("post.bankCardNumber");
+        $data["openBank"] = I("post.openBank");
+        $data["accountTitle_id"] = I("post.accountTitle_id");
+        $data["isDefault"] = I("post.isDefault");
+        $bankInformation = D("BankInformation");
+        $datas = $bankInformation->create($data);
+        if($datas){
+            $result = $bankInformation->where("pid=".$id)->save($datas);
+        }
+        if($result){
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+        self::jsons($error,$result);
+    }
+
+    //显示考勤信息
+    public function attendanceInformation(){
+        $id = I("post.id");
+        $attendanceInformation = D("AttendanceInformation");
+        $result = $attendanceInformation->table("oa_attendance_information as a")->join("oa_attendance as b on b.id = a.attendanceSystem")
+            ->join("oa_shift as c on c.id=a.shift")
+            ->field("a.id,a.bid,b.name as attendanceSystem,b.content,c.name as shift,c.content,a.restDayPlan")
+            ->where("bid=" . $id)->find();
+        if($result){
+            $error = 0;
+        }else{
+            $error = 1;
+        }
+        self::jsons($error,$result);
+    }
+
+
+    //增加考勤信息
+    public function addAttendanceInformation(){
+        $data['bid'] = I("post.id");
+        $data['attendanceSystem'] = I("post.attendanceSystem");
+        $data['shift'] = I("post.shift");
+        $data['restDayPlan'] = I("post.restDayPlan");
+        $attendanceInformation = D("AttendanceInformation");
+        $datas = $attendanceInformation->create($data);
+        if ($datas) {
+            $result = $attendanceInformation->where("bid = " . $data["bid"])->save($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改考勤信息
+    public function updateAttendanceInformation(){
+        $data['bid'] = I("post.id");
+        $data['attendanceSystem'] = I("post.attendanceSystem");
+        $data['shift'] = I("post.shift");;
+        $data['restDayPlan'] = I("post.restDayPlan");
+        $attendanceInformation = D("AttendanceInformation");
+        $datas = $attendanceInformation->create($data);
+        if ($datas) {
+            $result = $attendanceInformation->where("bid = " . $data["bid"])->save($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //上传简历方法
+    public function uploadResume(){
+        $upload = new \Think\Upload();
+        $upload->maxSize = 3145728;
+        $upload->exts = array('jpg', 'doc', 'docx', 'pdf');// 设置附件上传类型
+        $upload->rootPath = './Public/Uploads/resume/';
+        $upload->saveName = array('uniqid', mt_rand(1, 999999) . '_' . md5(uniqid()));
+        $upload->subName = array('date', 'Ymd');
+        $info = $upload->upload();
+        if (!$info) {
+            $this->error($upload->getError());
+        } else {
+            $data["file"] = "/Public/Uploads/resume/" . $info['savepath'] . $info['savename'];
+        }
+        if ($data) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $data);
+    }
+
+    //公司信息
+    public function company(){
+        $company = D("Company");
+        $result = $company->field("id,name")->select();
+        if ($result || $result=="") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+    //增加公司信息
+    public function addCompany(){
+        $data["name"] = I("post.name");
+        $company = D("Company");
+        $datas = $company->create($data);
+        if ($datas) {
+            $result = $company->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+
+    }
+    //修改公司信息
+    public function updateCompany(){
+        $id = I("post.id");
+        $data["name"] = I("post.name");
+        $company = D("Company");
+        $datas = $company->create($data);
+        if ($datas) {
+            $result = $company->where("id = " . $id)->save($datas);
+        }
+        if ($result || $result == "") {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //删除公司信息
+    public function deleteCompany(){
+        $id = I("post.id");
+        $length = strlen($id);
+        $company = D("Company");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $company->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+
+    //增加所有信息
+    public function addAll(){
+        /**
+         * 基础信息
+         */
+        $data['name'] = I("post.name");
+        $data['uname'] = I("post.uname");
+        $data['unumber'] = I("post.unumber");
+        //获取的
+        $data['department_id'] = I("post.department");
+        $data['leader'] = I("post.leader");
+        //获取的是ID
+        $data['category_id'] = I("post.category");
+        $data['workEmail'] = I("post.workEmail");
+        $data['telephone'] = I("post.telephone");
+        $data['weixin'] = I("post.weixin");
+        $data['ownEmail'] = I("post.ownEmail");
+        $data['birthday'] = I("post.birthday");
+        $data['constellation'] = I("post.constellation");
+        $data['qq'] = I("post.qq");
+        $data['national'] = I("post.national");
+        $data['married'] = I("post.married");
+        $data['native'] = I("post.native");
+        $data['photo'] = I("post.photo");
+        $basicInformation = D("BasicInformation");
+        $datas = $basicInformation->create($data);
+        if ($datas) {
+             $basicInformation->add($datas);
+        }
+
+
+
+        /**
+         * 增加人事信息
+         */
+        //传递过来id，来保存是属于谁的人事信息
+        $data['bid'] = I("post.id");
+        //保存学历id，链接学历表
+        $data['education_id'] = I("post.education_id");
+        $data['school'] = I("post.school");
+        $data['hobby'] = I("post.hobby");
+        //获取的是Id
+        $data['cardType_id'] = I("post.cardType_id");
+        $data['cardNumber'] = I("post.cardNumber");
+        //获取的是ID
+        $data['workYear'] = I("post.workYear");
+        //链接职级表
+        $data['rank_id'] = I("post.rank_id");
+        //链接职位表
+        $data['position_id'] = I("post.position_id");
+        $data['coreMembers'] = I("post.coreMembers");
+        //招聘来源
+        $data['source_id'] = I("post.source_id");
+        $data['referees'] = I("post.referees");
+        $data['hiredate'] = I("post.hiredate");
+        $data['correctionDate'] = I("post.correctionDate");
+        $data['homeAddress'] = I("post.homeAddress");
+        $data['address'] = I("post.address");
+        $data['contactPerson'] = I("post.contactPerson");
+        $data['contactPersonPhone'] = I("post.contactPersonPhone");
+        $data['file'] = I("post.file");
+        $data['payType'] = I("post.payType");
+        $data['integral'] = I("post.integral");
+        $data['discount'] = I("post.discount");
+        $data['contractStart'] = I("post.contractStart");
+        $data['signedYears'] = I("post.signedYears");
+        $data['contractEnd'] = I("post.contractEnd");
+        $data['isRenewal_id'] = I("post.isRenewal_id");
+        $data['leaveDate'] = I("post.leaveDate");
+        $data['leaveType_id'] = I("post.leaveType_id");
+        $data['leaveReason'] = I("post.leaveReason");
+        $personnelInformation = D("PersonnelInformation");
+        $datas = $personnelInformation->create($data);
+        if ($datas) {
+             $personnelInformation->add($datas);
+        }
+
+
+        /**
+         * 增加社保信息
+         */
+        $data['bid'] = I("post.id");
+        $data['householdType_id'] = I("post.householdType_id");
+        $data['payLand'] = I("post.payLand");
+        $data['payBase'] = I("post.payBase");
+        $data['foudBase'] = I("post.foudBase");
+        $data['medical'] = I("post.medical");
+        $data['pension'] = I("post.pension");
+        $data['unemployment'] = I("post.unemployment");
+        $data['fund'] = I("post.fund");
+        $data['medicalTwo'] = I("post.medicalTwo");
+        $data['pensionTwo'] = I("post.pensionTwo");
+        $data['unemploymentTwo'] = I("post.unemploymentTwo");
+        $data['hurted'] = I("post.hurted");
+        $data['birthed'] = I("post.birthed");
+        $data['fundTwo'] = I("post.fundTwo");
+        $socialSecurityInformation = D("SocialSecurityInformation");
+        $datas = $socialSecurityInformation->create($data);
+        if ($datas) {
+             $socialSecurityInformation->add($datas);
+        }
+
+
+        /*
+         * 增加银行卡信息
+         */
+        $data["bid"] = I("post.id");
+        $data["bankCardNumber"] = I("post.bankCardNumber");
+        $data["openBank"] = I("post.openBank");
+        $data["accountTitle_id"] = I("post.accountTitle_id");
+        $data["isDefault"] = I("post.isDefault");
+        $bankInformation = D("BankInformation");
+        $datas = $bankInformation->create($data);
+        if($datas){
+             $bankInformation->add($datas);
+        }
+
+    }
+}

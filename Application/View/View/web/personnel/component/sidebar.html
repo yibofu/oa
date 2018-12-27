@@ -1,0 +1,33 @@
+<div>
+    <el-row class="tac siderow" style="overflow: auto">
+        <el-col :span="24" class="sidecol">
+            <el-menu :default-active="this.$route.path"
+                     class="el-menu-vertical-demo"
+                     router
+                     @open="handleOpen"
+                     @close="handleClose"
+                     background-color="#545c64"
+                     text-color="#fff"
+                     active-text-color="#ffd04b">
+                <block v-for="(item,index) in menuList">
+                    <block v-if="item.children[0]">
+                        <el-submenu :index="item.number">
+                            <template slot="title">
+                                <i class="el-icon-location"></i>
+                                <span>{{item.name}}</span>
+                            </template>
+                            <el-menu-item v-for="(items,indexs) in item.children" :key="indexs" :index="items.route.name">{{items.name}}</el-menu-item>
+                        </el-submenu>
+                    </block>
+                    <block v-else>
+                        <el-menu-item :index="item.route.name">
+                            <i class="el-icon-menu"></i>
+                            <span slot="title">{{item.name}}</span>
+                        </el-menu-item>
+                    </block>
+                </block>
+            </el-menu>
+        </el-col>
+
+    </el-row>
+</div>

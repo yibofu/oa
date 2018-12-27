@@ -1,0 +1,26 @@
+<div>
+
+    <el-row>
+        <el-col :span="4" style="line-height: 60px;    border-bottom: solid 1px #e6e6e6;    background: rgb(84, 92, 100);
+    color: #fff;
+    padding-left: 30px;">梵几人事系统</el-col>
+        <el-col :span="20">
+            <el-menu
+                    :default-active="activeIndex2"
+                    class="el-menu-demo"
+                    mode="horizontal"
+                    @select="handleSelect"
+                    background-color="#545c64"
+                    text-color="#fff"
+                    active-text-color="#ffd04b">
+                <el-menu-item index="1">人事管理</el-menu-item>
+
+                <el-menu-item index="2"><a href="https://www.ele.me" target="_blank">问题跟踪</a></el-menu-item>
+
+                <el-menu-item index="3"><a href="https://www.ele.me" target="_blank">奖项</a></el-menu-item>
+
+
+            </el-menu>
+        </el-col>
+    </el-row>
+</div>

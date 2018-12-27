@@ -1,0 +1,131 @@
+<div v-if="isShow" class="add-position">
+    <div class="add-social-outline">
+        <div class="position-title" v-if="editWhich!=''">修 改 社 保 方 案</div>
+        <div class="position-title" v-else>新 增 社 保 方 案</div>
+        <div class="line-to">
+            <div style="float: left; line-height: 40px; margin-right: 5px;"><span>城   市</span></div>
+            <div v-if="editWhich!=''">
+                <el-input v-model="socialSecurityInfo.city" disabled="true" class="city-input"></el-input>
+            </div>
+            <div v-else>
+                <v-distpicker
+                        :province="province"
+                        :city="city"
+                        hide-area
+                        @province="onChangeProvince"
+                        @city="onChangeCity">
+                </v-distpicker>
+            </div>
+        </div>
+        <div class="line-to">
+            <span>户口性质</span>
+            <el-select v-if="editWhich!=''" disabled="true" v-model="socialSecurityInfo.householdType" placeholder="请选择户口性质">
+                <el-option v-for="item in householdList" :label="item.householdType" :value="item.householdType"></el-option>
+            </el-select>
+            <el-select v-else v-model="socialSecurityInfo.householdType" placeholder="请选择户口性质">
+                <el-option v-for="item in householdList" :label="item.householdType" :value="item.householdType"></el-option>
+            </el-select>
+        </div>
+        <div style="display: block; margin-bottom: 15px;">
+            <span class="demonstration" style="float: none">请设置生效日期 <span style="color: #dc3b31">(生效日期不能小于当前日期)</span></span>
+            <el-date-picker
+                    value-format="yyyy-MM-dd"
+                    v-model="socialSecurityInfo.effectiveDate"
+                    type="date"
+                    placeholder="选择日期">
+            </el-date-picker>
+        </div>
+        <div style="display: block; margin-bottom: 15px;">
+            <div style="float: left; line-height: 40px; margin-right: 5px;"><span class="demonstration">失效日期</span></div>
+            <div class="program-input">
+                <el-input v-model="input" disabled="true" class="leaveDate"></el-input>
+            </div>
+        </div>
+        <div style="display: block; margin-bottom: 15px;" class="social-table">
+            <table class="social-data" cellspacing="0">
+                <tr>
+                    <th rowspan="2" colspan="1">缴费项目</th><!-- colspan="2"-->
+                    <th colspan="2" rowspan="1">缴费基数</th><!-- rowspan="2"-->
+                    <th colspan="2" rowspan="1">个人</th>
+                    <th colspan="2" rowspan="1">公司</th>
+
+                </tr>
+                <tr>
+                    <th>最低基数</th>
+                    <th>最高基数</th>
+                    <th>比例%</th>
+                    <th>固定费用</th>
+                    <th>比例%</th>
+                    <th>固定费用</th>
+                </tr>
+                <tr>
+                    <th>养老</th>
+                    <th><input v-model="socialSecurityInfo.pensionBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.pensionHighestBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.pensionRatio" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.pensionFixedFee" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.pensionRatioTwo" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.pensionFixedFeeTwo" type="text" placeholder="请输入"></th>
+                </tr>
+                <tr>
+                    <th>工伤</th>
+                    <th><input v-model="socialSecurityInfo.hurtedBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.hurtedHighestBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.hurtedRatio" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.hurtedFixedFee" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.hurtedRatioTwo" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.hurtedFixedFeeTwo" type="text" placeholder="请输入"></th>
+                </tr>
+                <tr>
+                    <th>失业</th>
+                    <th><input v-model="socialSecurityInfo.unemploymentBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.unemploymentHighestBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.unemploymentRatio" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.unemploymentFixedFee" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.unemploymentRatioTwo" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.unemploymentFixedFeeTwo" type="text" placeholder="请输入"></th>
+                </tr>
+                <tr>
+                    <th>生育</th>
+                    <th><input v-model="socialSecurityInfo.birthedBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.birthedHighestBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.birthedRatio" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.birthedFixedFee" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.birthedRatioTwo" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.birthedFixedFeeTwo" type="text" placeholder="请输入"></th>
+                </tr>
+                <tr>
+                    <th>医疗</th>
+                    <th><input v-model="socialSecurityInfo.medicalBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.medicalHighestBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.medicalRatio" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.medicalFixedFee" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.medicalRatioTwo" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.medicalFixedFeeTwo" type="text" placeholder="请输入"></th>
+                </tr>
+                <tr>
+                    <th>大额医疗</th>
+                    <th><input v-model="socialSecurityInfo.largeMedicalBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.largeMedicalHighestBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.largeMedicalRatio" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.largeMedicalFixedFee" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.largeMedicalRatioTwo" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.largeMedicalFixedFeeTwo" type="text" placeholder="请输入"></th>
+                </tr>
+                <tr>
+                    <th>公积金</th>
+                    <th><input v-model="socialSecurityInfo.foudBase" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.highestfoud" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.foudRatio" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.foudBaseFixedFee" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.foudRatioTwo" type="text" placeholder="请输入"></th>
+                    <th><input v-model="socialSecurityInfo.foudBaseFixedFeeTwo" type="text" placeholder="请输入"></th>
+                </tr>
+            </table>
+        </div>
+        <div class="btn-place">
+            <el-button @click="checkBtn(0)" type="warning">取 消</el-button>
+            <el-button @click="checkBtn(1)" type="primary">保 存</el-button>
+        </div>
+    </div>
+</div>

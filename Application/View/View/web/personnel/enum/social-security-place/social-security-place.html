@@ -1,0 +1,43 @@
+<div>
+    <el-button @click="checkInfor(0)">新 增</el-button>
+    <el-button @click="checkInfor(1)">删 除</el-button>
+    <el-table
+            max-height="550"
+            size="small"
+            border="true"
+            ref="multipleTables"
+            :data="tableData"
+            tooltip-effect="dark"
+            style="width: 40%; margin-top: 30px;">
+        <el-table-column
+                type="selection"
+                width="55">
+        </el-table-column>
+        <el-table-column
+                prop="id"
+                label="社保缴纳地编号"
+                :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'}, {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]"
+                :filter-method="filterHandler"
+                width="150">
+        </el-table-column>
+        <el-table-column
+                prop="name"
+                label="社保缴纳地"
+                :filters="[{text: '王小虎', value: '王小虎'}, {text: '王小虎', value: '王小虎'}, {text: '王小虎', value: '王小虎'}, {text: '王小虎', value: '王小虎'}]"
+                :filter-method="filterHandler"
+                show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+                fixed="right"
+                label="操作"
+                width="100">
+            <template slot-scope="scope">
+                <el-button @click="operationData(scope.row,0)" type="text" size="small">修改</el-button>
+                <el-button @click="operationData(scope.row,1)" type="text" size="small">删除</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <div>
+        <add-social-security-place ref="infor"></add-social-security-place>
+    </div>
+</div>

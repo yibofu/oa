@@ -1,0 +1,15 @@
+/*.el-tabs__header{*/
+    /*margin: 0;*/
+/*}*/
+.el-tabs--card > .el-tabs__header .el-tabs__item.is-active{
+    border-bottom-color: #e4e7ed;
+}
+.department-tree-bgcolor{
+    /*background-color: #F4FFFD;*/
+    height: 550px;
+    max-height: 550px;
+    overflow: auto;
+}
+.department-tree-bgcolor span{
+    font-weight: bold;
+}

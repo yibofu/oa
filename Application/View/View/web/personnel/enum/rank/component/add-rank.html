@@ -1,0 +1,19 @@
+<div v-if="isShow" class="add-position">
+    <div class="add-position-outline">
+        <div class="position-title" v-if="editWhich!=''">修 改 职 级</div>
+        <div class="position-title" v-else>新 增 职 级</div>
+        <div style="float: left; line-height: 40px; width: 60px;"><span>职级名称</span></div>
+        <div class="ranks-input">
+            <el-input
+                    class="rank-input"
+                    placeholder="请输入内容"
+                    v-model="rankInfo.name"
+                    clearable>
+            </el-input>
+        </div>
+        <div class="btn-place">
+            <el-button @click="checkBtn(0)">取 消</el-button>
+            <el-button @click="checkBtn(1)" type="primary">保 存</el-button>
+        </div>
+    </div>
+</div>

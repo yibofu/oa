@@ -1,0 +1,21 @@
+define([
+    'department/department',
+    'person-list/person-list/'
+    // ,'demo/demo'
+], function(
+    Department,
+    PersonList
+
+    // , Demo
+){
+    return [
+        {
+            path: '/department',
+            component: Department,
+            children: [
+                { path: '', redirect: 'department' },
+                { path: 'person-list', component: PersonList, name: 'person-list' },
+            ]
+        },
+    ];
+});

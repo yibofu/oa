@@ -1,0 +1,44 @@
+[ 2018-09-29T10:21:01+08:00 ] 127.0.0.1 /index.php
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000412s ]
+INFO: [ app_init ] --END-- [ RunTime:0.002825s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001223s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.002272s ]
+INFO: [ view_parse ] --START--
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.013203s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.016046s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.012500s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.015168s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.002919s ]
+INFO: [ app_end ] --END-- [ RunTime:0.005680s ]
+
+[ 2018-09-29T16:05:33+08:00 ] 127.0.0.1 /Public/Uploads/2018-09-29/5baee0605c5aa.txt
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000200s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001909s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001218s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.002265s ]
+ERR: 无法加载控制器:Public
+
+[ 2018-09-29T16:05:52+08:00 ] 127.0.0.1 /Public/Uploads/2018-09-29/521er5ewrtdf54645.txt
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000196s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001678s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001166s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.002214s ]
+ERR: 无法加载控制器:Public
+
+[ 2018-09-29T16:06:04+08:00 ] 127.0.0.1 /Public/Uploads/2018-09-29/521er5ewrtdf54645.txt
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000218s ]
+INFO: [ app_init ] --END-- [ RunTime:0.002243s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001249s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.002299s ]
+ERR: 无法加载控制器:Public
+

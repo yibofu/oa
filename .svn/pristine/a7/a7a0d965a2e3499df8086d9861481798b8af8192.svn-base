@@ -1,0 +1,75 @@
+define([
+    'text!department/component/department-orgchart.html',
+    'jquery',
+    'vendor/orgchart-master/dist/js/jquery.orgchart.min',
+    'vendor/orgchart-master/dist/js/jquery.mockjax.min',
+
+    'css!department/component/department-orgchart.css',
+    'css!vendor/vue-orgchart/dist/style.min.css',
+    'css!vendor/orgchart-master/src/css/jquery.orgchart.css'
+], function(
+    tpl,
+    $
+){
+    // var datascource;
+    return {
+        template: tpl,
+        data: function(){
+            return {
+                chartData: {
+                    name: 'JavaScript',
+                    children: [
+                        { name: 'Angular' },
+                        {
+                            name: 'React',
+                            children: [{ name: 'Preact' }]
+                        },
+                        {
+                            name: 'Vue',
+                            children: [{ name: 'Moon' }]
+                        }
+                    ]
+                }
+            }
+        },
+        methods: {
+            getData: function () {
+                datascource = this.data;
+            }
+        },
+        mounted: function(){
+            this.getData();
+        },
+    };
+
+    var datascource = {
+        'name': 'Lao Lao',
+        'title': 'general manager',
+        // 'relationship': 001,
+        'children': [
+            { 'name': 'Bo Miao', 'title': 'department manager'/*, 'relationship': 110 */},
+            { 'name': 'Su Miao', 'title': 'department manager', /*'relationship': 111,
+*/      'children': [
+                { 'name': 'Tie Hua', 'title': 'senior engineer'/*, 'relationship': 110*/ },
+                { 'name': 'Hei Hei', 'title': 'senior engineer'/*, 'relationship': 110*/ }
+            ]
+            },
+            { 'name': 'Yu Jie', 'title': 'department manager'/*, 'relationship': 110*/ }
+        ]
+    };
+
+    $.mockjax({
+        url: '/orgchart/initdata',
+        responseTime: 1000,
+        contentType: 'application/json',
+        responseText: datascource
+    });
+
+    $('#chart-container').orgchart({
+        'data' : '/orgchart/initdata',
+        'nodeContent': 'title',
+        'toggleSiblingsResp': false,
+        'parentNodeSymbol': 'glyphicon glyphicon-th-large',
+    });
+    $(".orgchart").css({"background-image": "none"})
+});

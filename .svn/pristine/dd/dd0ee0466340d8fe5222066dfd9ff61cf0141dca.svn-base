@@ -1,0 +1,12 @@
+<div>
+    <el-button icon="el-icon-upload" size="small" type="success">导 入</el-button>
+    <el-button icon="el-icon-download" size="small" type="success">导 出</el-button>
+    <el-tabs v-model="activeName" type="card" @tab-click="handleClick" style="margin-top: 15px;">
+        <el-tab-pane label="在 职" name="first">
+            <social-security-archives-list ref="socialLista"></social-security-archives-list>
+        </el-tab-pane>
+        <el-tab-pane label="离 职" name="second">
+            <social-security-archives-list ref="socialListb"></social-security-archives-list>
+        </el-tab-pane>
+    </el-tabs>
+</div>

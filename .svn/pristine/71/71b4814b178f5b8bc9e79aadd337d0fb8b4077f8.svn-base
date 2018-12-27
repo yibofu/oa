@@ -1,0 +1,192 @@
+<?php
+
+namespace Manage\Controller;
+
+use Common\Controller\BaseController;
+use Think\Page;
+
+header("content-type:text/html;charset=utf-8");
+
+class AdminController extends BaseController
+{
+    public function index()
+    {
+        if (I("account")) {
+            $map['account'] = array('like', '%' . I('account') . '%');
+        }
+        $pages = I("pages");
+        $rules = D("Admins");
+        $count = $rules->table("oa_admins as a")->join("oa_admin_roles as b on b.id = a.role_id")
+            ->field('a.id,a.account,a.nick_name,a.status,a.admin_type,a.create_time,b.role_name')->count();
+        $page = new Page($count, $pages);
+        $totalPages = ceil($count / $pages);
+        $page->totalPages = $totalPages;
+        $pageNum = I("post.pageNum");
+        if ($pageNum) {
+            $pageNum;
+        } else {
+            $pageNum = 1;
+        }
+        $offset = ($pageNum - 1) * $pages;
+
+        $list = $rules->table("oa_admins as a")->join("oa_admin_roles as b on b.id = a.role_id")
+            ->field('a.id,a.account,a.nick_name,a.status,a.admin_type,a.create_time,b.role_name')
+            ->where($map)->order('a.id asc')->limit($offset, $pages)->select();
+        foreach ($list as &$val) {
+            $val['status'] = $val['status'] == 1 ? '未禁用' : '禁用';
+            $val['admin_type'] = $val['admin_type'] == 1 ? '普通管理员' : '超级管理员';
+        }
+        $result = array(
+            'page' => $page,
+            'pageNum' => $pageNum,
+            'result' => $list
+        );
+        self::jsons($error = 0, $result);
+    }
+
+    //弹出增加窗口中的下拉选择项
+    public function selectMessage()
+    {
+        $roles = D('AdminRoles');
+        $roleName = $roles->field('id,role_name')->select();
+        $auths = D('admin_auths');
+        $authName = $auths->field('id,auth_name')->select();
+        $result = array(
+            "roleName" => $roleName,
+            "authName" => $authName
+        );
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        echo self::jsons($error, $result);
+    }
+
+    //查询权限下边是否有子权限
+    public function roles(){
+        $adminAuthRule = D("AdminAuthRules");
+        $list = $adminAuthRule->field("id,auth_id,parent_id,rule_name,module,controller,action,action_name")->where("parent_id = 0")->select();
+        foreach($list as $key=>$value){
+            $pid[] = $value["id"];
+        }
+
+        $arr = $adminAuthRule->field("id,auth_id,parent_id,rule_name,module,controller,action,action_name")
+            ->where("parent_id != 0")->select();
+
+        foreach($arr as $rk=>$rv){
+            $pids[] = $rv["parent_id"];
+        }
+        $con = $adminAuthRule->field("id,auth_id,parent_id,rule_name,module,controller,action,action_name")
+            ->where(array('parent_id' => array('in',$pids)))->select();
+        echo $adminAuthRule->getLastSql();
+    }
+
+    //增加方法
+    public function add()
+    {
+        if (IS_POST) {
+            $data['role_id'] = I("post.role_name");//增加到admin表和mappings表里的role_id
+            $data['account'] = I("post.account");//增加到admin表的account
+            $data['nick_name'] = I("post.nick_name");//增加到admin表里的nick_name
+            $data['password'] = password(I("post.password"));//增加到admin表里的password
+            $data['password'] = $data['password']['password'];
+            $data['status'] = I("post.status");//增加到admin表里的status字段
+            $data['admin_type'] = I("post.admin_type");//增加到admin表里的admin_type字段
+            $data['create_time'] = formateTime();//增加到admin表里的cerate_time字段
+            $admin = D('admins');
+            $datas = $admin->create($data);
+            if ($datas) {
+                $list = $admin->add($datas);
+                if ($list) {
+                    $condition['role_id'] = I("post.role_name");
+                    $condition['auth_id'] = I("post.auth_name");
+                    $condition['create_time'] = formateTime();
+                    $mappings = D("admin_role_auth_mappings");
+                    $conditions = $mappings->create($condition);
+                    foreach ($conditions['auth_id'] as $k => $v) {
+                        $conditions['auth_id'] = $v;
+                        $result = $mappings->add($conditions);
+                    }
+                }
+                if ($result) {
+                    $error = 0;
+                } else {
+                    $error = 1;
+                }
+            }
+            echo self::jsons($error, $result);
+        }
+    }
+
+    public function check()
+    {
+        $id = I("post.id");
+        $admin = D("Admins");
+        $result = $admin->table("oa_admins as a")->join("oa_admin_roles as b on b.id = a.role_id")
+            ->field('a.id,a.account,a.nick_name,a.status,a.admin_type,b.role_name')
+            ->where("a.id=".$id)->order('a.id asc')->find();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        echo self::jsons($error, $result);
+    }
+
+    public function update()
+    {
+        if (IS_POST) {
+            $id = I("post.id");
+            $data['role_id'] = I("post.role_name");
+            $data['account'] = I("post.account");
+            $data['nick_name'] = I("post.nick_name");
+            $data['password'] = password(I("post.password"));
+            $data['password'] = $data['password']['password'];
+            $data['status'] = I("post.status");
+            $data['admin_type'] = I("post.admin_type");
+            $admin = D('admins');
+            $datas = $admin->create($data);
+            if ($datas) {
+                $list = $admin->where("id = " . $id)->save($datas);
+                if ($list) {
+                    $condition['role_id'] = I("post.role_name");
+                    $condition['auth_id'] = I("post.auth_name");
+                    $mappings = D("admin_role_auth_mappings");
+                    $conditions = $mappings->create($condition);
+                    foreach ($conditions['auth_id'] as $k => $v) {
+                        $conditions['auth_id'] = $v;
+                        $result = $mappings->where("role_id=".$conditions['role_id'])->save($conditions);
+                    }
+                    if ($result) {
+                        $error = 0;
+                    } else {
+                        $error = 1;
+                    }
+                }
+            }
+            echo self::jsons($error, $result);
+        }
+    }
+
+    //删除
+    public function delete()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $admin = D("admins");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $admin->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+}

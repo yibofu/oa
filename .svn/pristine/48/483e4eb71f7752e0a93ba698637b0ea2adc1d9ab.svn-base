@@ -1,0 +1,79 @@
+.title-input input{
+    height: 20px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 2px 15px 2px 5px;
+}
+.cascader-info .el-cascader__label{
+    position: absolute;
+    left: 0;
+}
+#table-cascader div{
+    line-height: 20px;
+    padding: 0;
+}
+#table-cascader div input{
+    line-height: 20px;
+    height: 20px;
+    padding: 2px 10px 2px 5px;
+}
+#table-cascader div i{
+    line-height: 20px;
+}
+#table-cascader div span{
+    line-height: 20px;
+}
+#table-cascader .el-cascader__label{
+    line-height: 20px;
+    padding: 0 15px 0 6px;
+}
+.cascader-payLand .el-cascader__label{
+    position: absolute;
+    left: 0;
+}
+#table-payLand div{
+    line-height: 20px;
+    padding: 0;
+}
+#table-payLand div input{
+    line-height: 20px;
+    height: 20px;
+    padding: 2px 10px 2px 5px;
+}
+#table-payLand div i{
+    line-height: 20px;
+}
+#table-payLand div span{
+    line-height: 20px;
+}
+#table-payLand .el-cascader__label{
+    line-height: 20px;
+    padding: 0 15px 0 6px;
+}
+.cascader-householdType .el-cascader__label{
+    position: absolute;
+    left: 0;
+}
+#table-householdType div{
+    line-height: 20px;
+    padding: 0;
+}
+#table-householdType div input{
+    line-height: 20px;
+    height: 20px;
+    padding: 2px 10px 2px 5px;
+}
+#table-householdType div i{
+    line-height: 20px;
+}
+#table-householdType div span{
+    line-height: 20px;
+}
+#table-householdType .el-cascader__label{
+    line-height: 20px;
+    padding: 0 15px 0 6px;
+}
+.hidden{
+    display: none;
+}

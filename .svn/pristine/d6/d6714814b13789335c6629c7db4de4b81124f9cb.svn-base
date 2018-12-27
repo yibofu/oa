@@ -1,0 +1,100 @@
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.avatar-uploader{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+}
+.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+}
+.avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+}
+.tip{
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.el-collapse-item__header{
+    font-size: 18px;
+    color: #409EFF;
+}
+.el-form-item{
+    width: 30%;
+}
+.el-form-item__label{
+    font-size: 16px;
+    font-weight: bold;
+}
+.el-form-item__content{
+    width:62%;
+}
+.el-form-item__label{
+    width:130px;
+}
+.el-row{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.bottom-con{
+    width:100%;
+    height: 50px;
+    background-color: #303133;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.file{
+    position: absolute;
+    top:0;
+    left: 0;
+    width:100%;
+    height:100%;
+    opacity: 0;
+    cursor: pointer;
+}
+#province,#city{
+    margin-right: 20px;
+    width: 160px;
+    height: 30px;
+    font-size: 16px;
+    line-height: 30px;
+    border: none;
+    border-bottom: 1px dashed #ccc;
+    outline: none;
+    -moz-appearance:none;
+    -webkit-appearance:none;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAANCAYAAACtpZ5jAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjQ0NDJFRkVCQzdDMTFFOEExODdERDQ0Mjc4RDY1OEUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjQ0NDJFRkZCQzdDMTFFOEExODdERDQ0Mjc4RDY1OEUiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGNDQ0MkVGQ0JDN0MxMUU4QTE4N0RENDQyNzhENjU4RSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGNDQ0MkVGREJDN0MxMUU4QTE4N0RENDQyNzhENjU4RSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsgLGscAAAEfSURBVHjaYmQAgv3796uIiYk90tbW/sVAITh06JAoiGYCGioBpG+/evXqzLFjx4QoMXTfvn3mf//+vffnz58tTA4ODi+BYheAWPfnz58HyDUcZCgjI+MeIJMHSG9mAhL/WVhYnP7//38VZvju3bv5yTUUiKc4Ojq2MIEkbG1t37OystrCDAdatJ9Yw7EYmgsOY5gCmOHQYDEkxnBgRBlhMxQEGNEVnzhxgu/79+8HgUwDID4PjAhHV1fXj9gMBcrtAxrMj24oiothwMLC4hMnJ6c9PpejGdqDbihWFxNyORZDS7HpZ8QXhlDDQWFoCjKciYmpAJhONxEylKDB0FwJiph9UMNhAK+hRBmMxXCChpIEzpw5wwUMXzNi1QMEGABbwKJVttXGvgAAAABJRU5ErkJggg==);
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+    background-size: 18px;
+}
+#sex .el-select,#leader .el-select,#payAccount .el-select,#categoryType .el-select,#department
+.el-cascader,#birthday .el-col, #constellation .el-select,#nations .el-select,#married .el-select,
+#education .el-select, #cardType .el-select,#rank .el-select,#position .el-select,
+#coreMembers .el-select, #source .el-select,#hiredate .el-col,#correctionDate .el-col,
+#payType .el-select, #categoryType .el-select,#company .el-select,#contractStart .el-col,
+#leaveDate .el-col, #leaveType .el-select,#householdType .el-select,#socialStarting .el-date-editor,
+#fundStarting .el-date-editor,#attendance .el-select{
+    width: 100%;
+}

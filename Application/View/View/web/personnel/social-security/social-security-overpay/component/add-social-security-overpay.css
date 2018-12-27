@@ -1,0 +1,97 @@
+.overPay{
+    width: 100%;
+    position: relative;
+}
+.overpay-con{
+    width: 800px;
+    margin: 0 auto;
+}
+.overpay-time{
+    width: 100%;
+    height: 40px;
+    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+    position: relative;
+    margin-bottom: 15px;
+}
+.overpay-time div{
+    height: 100%;
+}
+.overpay-time-tip{
+    width: 160px;
+    float: left;
+    background-color: #E3F6F4;
+    text-align: center;
+    line-height: 40px;
+    color: #9DA3A3;
+    /*font-weight: bold;*/
+}
+.overpay-time-con{
+    width: 100%;
+    padding: 4px 0 4px 200px;
+    box-sizing: border-box;
+    position: relative;
+}
+.overpay-time-con-in{
+    width: 100%;
+    height: 100%;
+}
+
+.overpay-project-title{
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.overpay-staff-title{
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.overpay-project{
+    width: 100%;
+    position: relative;
+}
+.overpay-project-table{
+    width: 100%;
+    position: relative;
+    border-collapse:collapse;
+    margin-bottom: 15px;
+    table-layout: fixed;
+    max-height: 290px;
+}
+.overpay-project-table tr{
+    height: 40px;
+    border-top: 1px solid #ddd;
+}
+.overpay-project-table tr:last-child{
+    height: 40px;
+    border-bottom: 1px solid #ddd;
+}
+.overpay-project-table tr th:first-child{
+    width: 20%;
+    background-color: #E3F6F4;
+    color: #9DA3A3;
+    font-weight: 100;
+}
+.overpay-project-table tr th:nth-child(2){
+    width: 25%;
+    /*border-right: 1px solid #ddd;*/
+}
+.overpay-project-table tr th:nth-child(3){
+    width: 20%;
+    background-color: #E3F6F4;
+    color: #9DA3A3;
+    font-weight: 100;
+}.overpay-project-table tr th:nth-child(4){
+     padding: 4px;
+    box-sizing: border-box;
+ }
+ .overpay-bth{
+     width:100%;
+     display: flex;
+     justify-content: center;
+ }

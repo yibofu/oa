@@ -1,0 +1,19 @@
+<?php
+namespace Common\Controller;
+use Think\Controller;
+class BaseController extends Controller{
+    function formateTime($time=null, $formate='Y-m-d')
+    {
+        $time = is_null($time) ? time() : $time;
+        return date($formate, $time);
+    }
+
+    function jsons($error,$result){
+        $this->ajaxReturn(
+            array('error'=>$error,
+                'result'=>$result
+            )
+        );
+    }
+
+}

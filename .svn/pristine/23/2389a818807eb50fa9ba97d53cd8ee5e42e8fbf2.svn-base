@@ -1,0 +1,104 @@
+define([
+    'text!staff/component/staff-list.html',
+    'WebCommon/api',
+
+    // 'department/component/department-list',
+    'jquery',
+
+], function(
+    tpl,
+    Api,
+
+    $
+){
+
+    return {
+        template: tpl,
+        data: function(){
+            return {
+                tableData: [{
+                    wnumber: '001',
+                    department: '产品设计部',
+                    telephone: '13000000000',
+                    date: '2016-05-02',
+                    name: '王一虎',
+                    email: '13@fnji.com',
+                    tag: '家'
+                }, {
+                    wnumber: '002',
+                    department: 'IT部',
+                    telephone: '13000000001',
+                    date: '2016-05-04',
+                    name: '王二虎',
+                    email: '13@fnji.com',
+                    tag: '公司'
+                }, {
+                    wnumber: '003',
+                    department: '产品设计部',
+                    telephone: '13000000001',
+                    date: '2016-05-01',
+                    name: '王三虎',
+                    email: '13@fnji.com',
+                    tag: '家'
+                }, {
+                    wnumber: '004',
+                    department: '产品设计部',
+                    telephone: '13000000002',
+                    date: '2016-05-03',
+                    name: '王小虎',
+                    email: '13@fnji.com',
+                    tag: '公司'
+                }],
+                wnumber: [
+                    {text: '001', value: '001'},
+                    {text: '002', value: '002'},
+                    {text: '003', value: '003'},
+                    {text: '004', value: '004'}
+                ],
+                name: [
+                    {text: '王一虎', value: '王一虎'},
+                    {text: '王二虎', value: '王二虎'},
+                    {text: '王三虎', value: '王三虎'},
+                    {text: '王小虎', value: '王小虎'}
+                ],
+                department: [
+                    {text: '王一虎', value: '王一虎'},
+                    {text: '王二虎', value: '王二虎'},
+                    {text: '王三虎', value: '王三虎'},
+                    {text: '王小虎', value: '王小虎'}
+                ],
+            };
+        },
+        components: {
+            // DepartmentList: DepartmentList
+        },
+        computed: {
+        },
+        created: function () {
+            var obj = this;
+
+
+        },
+        methods: {
+            filterWnumber: function(value, row) {
+                return row.wnumber === value;
+            },
+            filterName: function(value, row) {
+                return row.name === value;
+            },
+            formatter: function(row, column) {
+                return row.address;
+            },
+            filterTag: function(value, row) {
+                return row.tag === value;
+            },
+            filterHandler: function(value, row, column) {
+                const property = column['property'];
+                return row[property] === value;
+            },
+        },
+        mounted: function(){
+            this.init();
+        }
+    };
+});

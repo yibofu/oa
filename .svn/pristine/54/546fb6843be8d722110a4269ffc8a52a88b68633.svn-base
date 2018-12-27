@@ -1,0 +1,14 @@
+<div>
+    <div v-if="staffPage==1">
+        <div style="padding-bottom: 30px;">
+            <el-button @click="backToList" icon="el-icon-back" size="small" type="primary">返 回</el-button>
+        </div>
+        <staff-add></staff-add>
+    </div>
+    <div v-else>
+        <div style="padding-bottom: 30px;">
+            <el-button @click="backToList" icon="el-icon-back" size="small" type="primary">返 回</el-button>
+        </div>
+        <staff-info></staff-info>
+    </div>
+</div>

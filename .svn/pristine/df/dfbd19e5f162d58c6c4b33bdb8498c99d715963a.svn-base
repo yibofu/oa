@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+    <base href="/Application/View/View/web/designbonus/">
+
+</head>
+<body>
+<div id="app">
+
+    <div class="center" style="width:100%;">
+        <main-page></main-page>
+    </div>
+
+</div>
+
+<div id="toast-overlay">
+    <loading-toast v-show="loadingToast.isShow"></loading-toast>
+</div>
+
+<script src="/Application/View/View/vendor/requirejs/require.js"></script>
+<script src="/Application/View/View/web/common/config.js"></script>
+
+<script>
+    require(['spucfg/spucfg']);
+</script>
+
+</body>
+</html>

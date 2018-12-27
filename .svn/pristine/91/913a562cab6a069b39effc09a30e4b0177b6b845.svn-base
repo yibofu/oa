@@ -1,0 +1,12 @@
+.department-info-con{
+    width: 100%;
+    height: 600px;
+    position: relative;
+}
+.department-info-title{
+    margin-bottom: 20px;
+    font-size: 26px;
+}
+.el-picker-panel__body{
+    z-index: 2020;
+}

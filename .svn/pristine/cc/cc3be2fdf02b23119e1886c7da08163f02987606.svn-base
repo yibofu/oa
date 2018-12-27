@@ -1,0 +1,173 @@
+define([
+    'text!staff/staff-info/staff-info.html',
+    'WebCommon/api',
+
+    'staff/staff-info/staff-info',
+    'jquery',
+    'css!staff/staff-info/staff-info.css'
+], function(
+    tpl,
+    Api,
+    $
+){
+    return {
+        template: tpl,
+        data: function(){
+            return {
+                btnText:'button',
+                header: [],
+                imageUrl: '',
+                isDisabled: true,
+                isBtnShow: false,
+                activeNameInfo: 'first',
+                activeNames: ['1'],
+                contractNumber: 1, //合同签订次数
+                contractNowNumber: 1, //合同签订次数
+                bankCardNumber: 1, //银行卡数量
+                formInline: {
+                    name: '林俊杰', //姓名
+                    uname: '', //昵称
+                    unumber: '', //工号
+                    sex: '0', //性别
+                    department: 'IT部', //部门
+                    posts: '', //岗位
+                    leader: '', //导师
+                    category: '', //人员类别
+                    workEmail: '', //工作邮箱
+                    telephone: '12345678910', //手机号码
+                    weixin: '', //微信号
+                    ownEmail: '', //个人邮箱
+                    birthday: '', //出生日期
+                    constellation: '', //星座
+                    QQ: '', //QQ号
+                    nation: '', //民族
+                    married: '', //婚姻状态
+                    native: '', //籍贯
+                    education: '', //学历
+                    school: '', //毕业院校
+                    hobby: '', //兴趣爱好
+                    cardType: '', //证件类型
+                    cardNumber: '', //证件号码
+                    workYear: '0.0', //工龄(年)
+                    rank: '', //职级
+                    position: '', //职位
+                    coreMembers: '', //是否核心人才
+                    source: '', //招聘来源
+                    hiredate: '', //入职日期
+                    correctionDate: '', //转正日期
+                    homeAddress: '', //家庭地址
+                    address: '', //现居住地
+                    contactPerson: '', //紧急联系人
+                    contactPersonPhone:'', //紧急联系人电话
+                    file: {name: 'food.jpeg'}, //简历附件
+                    payType: '', //上下发薪
+                    integral: '', //积分
+                    discount: '',//内购折扣
+                    contractStart: [''], //合同起始日
+                    signedYears: [''], //签订年限
+                    contractEnd: [''], //合同终止日
+                    leaveDate: '', //离职日期
+                    leaveType: '', //离职类别
+                    leaveReason: '', //离职原因
+                    medical: '', //医疗
+                    pension: '', //养老
+                    unemployment: '', //失业
+                    fund: '', //公积金
+                    medicalTwo: '', //医疗(公)
+                    pensionTwo: '', //养老(公)
+                    unemploymentTwo: '', //失业(公)
+                    hurted: '', //工伤
+                    birthed: '', //生育
+                    fundTwo: '', //公积金(公)
+                    bankCardNumber: [''], //银行卡号
+                    openBank: [''], //开户行
+                    accountTitle: [''], //账户名称
+                    attendanceSystem: '', //考勤制度
+                    attendance: '', //考勤班次
+                    restDayPlan: '', //休息日方案
+                },
+                experience: [
+                    {content: '几月几日进入公司',date: '2018-01-01'},
+                    {content: '几月几号转正',date: '2018-04-01'},
+                    {content: '几月几号获奖',date: '2018-12-01'}],
+                experienceNumber: 3,
+                widthLine: ['20%','80%','0%']
+            };
+        },
+        components: {
+        },
+        computed: {
+            sidebar: function() {
+                // return this.$store.state.app.sidebar
+            }
+        },
+        created: function () {
+            var obj = this;
+
+
+        },
+        methods: {
+
+            init: function () {
+                this.bankCardNumber = this.formInline.bankCardNumber.length;
+                this.contractNumber = this.formInline.contractStart.length;
+                this.contractNowNumber = this.formInline.contractStart.length;
+            },
+            handleClickInfo: function(tab, event) {
+                console.log(tab, event);
+            },
+            handleRemove: function(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePreview: function(file) {
+                console.log(file);
+                alert(111)
+            },
+            addContract: function () {
+                if(this.contractNumber===this.contractNowNumber){
+                    var str = '';
+                    this.formInline.contractStart.push(str);
+                    this.formInline.signedYears.push(str);
+                    this.formInline.contractEnd.push(str);
+                    this.contractNumber = this.formInline.contractStart.length;
+                }else {
+                    alert("一次只能续签一个合同");
+                }
+            },
+            addBankCard: function () {
+                var str = '';
+                this.formInline.bankCardNumber.push(str);
+                this.formInline.openBank.push(str);
+                this.formInline.accountTitle.push(str);
+                this.bankCardNumber = this.formInline.bankCardNumber.length;
+            },
+            deleteBankCard: function (index) {
+                index += 1;
+                // alert(this.bankCardNumber);
+                this.formInline.bankCardNumber.splice(index,1);
+                this.formInline.openBank.splice(index,1);
+                this.formInline.accountTitle.splice(index,1);
+                this.bankCardNumber = this.formInline.bankCardNumber.length;
+                alert(this.bankCardNumber);
+            },
+            editBtn: function (index) {
+                if(index==0){
+                    this.isDisabled = false;
+                    this.isBtnShow = true;
+                }else if(index==1){
+                    this.isDisabled = true;
+                    this.isBtnShow = false;
+                }else if(index==2){
+                    this.isDisabled = true;
+                    this.isBtnShow = false;
+                }
+            },
+            downloadFile: function () {
+                console.log(qwe);
+            }
+        },
+        mounted: function(){
+            this.init();
+        }
+    };
+});

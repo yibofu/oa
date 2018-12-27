@@ -1,0 +1,40 @@
+<div class="enum-work-number">
+    <div class="work-number-title">工号流水号设置</div>
+    <div class="out-frame">
+        <div class="frame-in">
+            <el-checkbox style="margin-bottom: 15px;" v-model="is_auto">自动生成工号</el-checkbox>
+            <br>
+            <span>规则：</span>
+            <el-select v-model="unumber.digits" clearable placeholder="请选择" style="width: 100px;" size="small">
+                <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
+            <span>位流水号</span>
+            <div style="margin-top: 15px;">
+                <div style="float: left;line-height: 32px;">起始值：</div>
+                <div id="enum-work-startVal" style="float: left">
+                    <el-input
+                            onkeypress="return event.keyCode>=48&&event.keyCode<=57"
+                            ng-pattern="/[^a-zA-Z]/"
+                            :disabled="digitLength==0"
+                            size="small"
+                            :maxLength="digitLength"
+                            placeholder="请输入数字"
+                            v-model="unumber.startingValue"
+                            clearable>
+                    </el-input>
+                </div>
+                <div style="clear: both;"></div>
+            </div>
+            <div style="margin-top: 15px;">示例：{{examples}}</div>
+        </div>
+        <div class="frame-in">
+            <el-button size="medium" type="warning">取消</el-button>
+            <el-button @click="addDigit" size="medium" type="primary">保存</el-button>
+        </div>
+    </div>
+</div>

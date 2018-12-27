@@ -1,0 +1,134 @@
+<?php
+/**
+ *格式化时间函数
+ *@param string	$formate 	时间格式,默认 Y-m-d H:i:s
+ *@param int $time	时间戳
+ *@return string	格式化后的时间	 
+ */
+function formateTime($time=null, $formate='Y-m-d H:i:s')
+{
+	$time = is_null($time) ? time() : $time;
+	return date($formate, $time);
+}
+
+
+/**
+ * 对用户的密码进行加密
+ * @param $password
+ * @param $encrypt //传入加密串，在修改密码时做认证
+ * @return array/password
+ */
+function password($password,$encrypt=''){
+    $pwd = array();
+    $pwd['encrypt'] = '';
+    $pwd['password'] = md5(md5(trim($password)).$pwd['encrypt']);
+    return $encrypt ? $pwd['password'] : $pwd;
+}
+
+
+function excelTime($date, $time = false) {
+    if (function_exists('GregorianToJD')) {
+        if (is_numeric($date)) {
+            $jd = GregorianToJD(1, 1, 1970);
+            $gregorian = JDToGregorian($jd + intval($date) - 25569);
+            $date = explode('/', $gregorian);
+            $date_str = str_pad($date[2], 4, '0', STR_PAD_LEFT) . "-" . str_pad($date[0], 2, '0', STR_PAD_LEFT) . "-" . str_pad($date[1], 2, '0', STR_PAD_LEFT) . ($time ? " 00:00:00" : '');
+            return $date_str;
+        }
+    } else {
+        $date = $date > 25568 ? $date + 1 : 25569; /*There was a bug if Converting date before 1-1-1970 (tstamp 0)*/
+        $ofs = (70 * 365 + 17 + 2) * 86400;
+        $date = date("Y-m-d", ($date * 86400) - $ofs) . ($time ? " 00:00:00" : '');
+    }
+    return $date;
+}
+
+//导出excel文件
+function phpExcelList($field,$list,$title="aaa"){
+    Vendor('PHPExcel.PHPExcel');
+    $objPHPExcel = new \PHPExcel();
+    $objWriter = new \PHPExcel_Writer_Excel5($objPHPExcel); //设置保存版本格式
+    foreach ($list as $key => $value) {
+        foreach ($field as $k => $v) {
+            if ($key == 0) {
+                $objPHPExcel->getActiveSheet()->setCellValue($k . '1', $v[1]);
+            }
+            $i = $key + 2; //表格是从2开始的
+//            if($v[0]=='socialStarTime'){
+//                $objPHPExcel->getActiveSheet()->setCellValue($k . $i, date('Y-m',$value[$v[0]]));
+//            }else{
+//                $objPHPExcel->getActiveSheet()->setCellValue($k . $i, $value[$v[0]]);
+//            }
+            $objPHPExcel->getActiveSheet()->setCellValue($k . $i, $value[$v[0]]);
+        }
+
+    }
+    header("Pragma: public");
+    header("Expires: 0");
+    header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
+    header("Content-Type:application/force-download");
+    header("Content-Type:application/vnd.ms-execl");
+    header("Content-Type:application/octet-stream");
+    header("Content-Type:application/download");;
+    header('Content-Disposition:attachment;filename='.$title.'.xls');
+    header("Content-Transfer-Encoding:binary");
+//        $objWriter->save($title.'.xls');
+    $objWriter->save('php://output');
+}
+
+/**
+ * 导入excel文件
+ * @param  string $file excel文件路径
+ * @return array        excel文件内容数组
+ */
+function import_excel($file){
+    // 判断文件是什么格式
+    $type = pathinfo($file);
+    $type = strtolower($type["extension"]);
+    $type=$type==='csv' ? $type : 'Excel2007';
+    ini_set('max_execution_time', '0');
+    Vendor('PHPExcel.PHPExcel');
+    // 判断使用哪种格式
+    $objReader = PHPExcel_IOFactory::createReader($type);
+    $objPHPExcel = $objReader->load($file);
+    $sheet = $objPHPExcel->getSheet(0);
+    // 取得总行数
+    $highestRow = $sheet->getHighestRow();
+    // 取得总列数
+    $highestColumn = $sheet->getHighestColumn();
+    //循环读取excel文件,读取一条,插入一条
+    $data=array();
+    //从第一行开始读取数据
+    for($j=1;$j<=$highestRow;$j++){
+        //从A列读取数据
+        for($k='A';$k<=$highestColumn;$k++){
+            // 读取单元格
+            $data[$j][]=$objPHPExcel->getActiveSheet()->getCell("$k$j")->getValue();
+        }
+    }
+    return $data;
+}
+
+
+
+/**
+ * 多文件上传
+ */
+//function getFiles($files){
+//    $upload = new \Think\Upload();
+//    $upload->maxSize = 0;
+//    $upload->exts = array('jpg', 'png', 'jpeg', 'xlsx', 'txt', 'doc', 'docx', 'zip', 'rar');
+//    $upload->rootPath = './Public/Uploads/';
+//    $info = $upload->upload();
+//    if (!$info) {
+//        $upload->getError();
+//    } else {
+//        $data = array();
+//        foreach($info as $file){
+//            $data['file'] = $file['file']['savepath'] . $file['file']['savename'];
+//        }
+//    }
+//    return $data;
+//}
+
+

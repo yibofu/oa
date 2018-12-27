@@ -1,0 +1,255 @@
+<div class="overPay">
+    <div class="overpay-con">
+        <div class="overpay-time">
+            <div class="overpay-time-tip">补缴区间</div>
+            <div class="overpay-time-con">
+                <div class="overpay-time-con-in">
+                    <el-date-picker
+                            size="small"
+                            value-format="yyyy-MM"
+                            v-model="month1"
+                            type="month"
+                            placeholder="起始月度">
+                    </el-date-picker>
+                    <span>-</span>
+                    <el-date-picker
+                            size="small"
+                            value-format="yyyy-MM"
+                            v-model="month1"
+                            type="month"
+                            placeholder="结束月度">
+                    </el-date-picker>
+                </div>
+            </div>
+        </div>
+        <div class="overpay-project">
+            <div class="overpay-project-title">补 缴 项 目</div>
+            <table class="overpay-project-table" border-collapse>
+                <tr>
+                    <th>养老保险</th>
+                    <th>
+                        <el-switch
+                                v-model="value1"
+                                active-color="#B7E0F6"
+                                active-text="缴费"
+                                inactive-text="不缴">
+                        </el-switch>
+                    </th>
+                    <th>公司部分补缴形式</th>
+                    <th>
+                        <el-select v-model="value" size="small" clearable :disabled="!value1" placeholder="请选择">
+                            <el-option
+                                    v-for="item in options"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </th>
+                </tr>
+                <tr>
+                    <th>医疗保险</th>
+                    <th>
+                        <el-switch
+                                v-model="value2"
+                                active-color="#B7E0F6"
+                                active-text="缴费"
+                                inactive-text="不缴">
+                        </el-switch>
+                    </th>
+                    <th>公司部分补缴形式</th>
+                    <th>
+                        <el-select v-model="value" size="small" clearable :disabled="!value2" placeholder="请选择">
+                            <el-option
+                                    v-for="item in options"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </th>
+                </tr>
+                <tr>
+                    <th>失业保险</th>
+                    <th>
+                        <el-switch
+                                v-model="value3"
+                                active-color="#B7E0F6"
+                                active-text="缴费"
+                                inactive-text="不缴">
+                        </el-switch>
+                    </th>
+                    <th>公司部分补缴形式</th>
+                    <th>
+                        <el-select v-model="value" size="small" clearable :disabled="!value3" placeholder="请选择">
+                            <el-option
+                                    v-for="item in options"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </th>
+                </tr>
+                <tr>
+                    <th>工伤保险</th>
+                    <th>
+                        <el-switch
+                                v-model="value4"
+                                active-color="#B7E0F6"
+                                active-text="缴费"
+                                inactive-text="不缴">
+                        </el-switch>
+                    </th>
+                    <th>公司部分补缴形式</th>
+                    <th>
+                        <el-select v-model="value" size="small" clearable :disabled="!value4" placeholder="请选择">
+                            <el-option
+                                    v-for="item in options"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </th>
+                </tr>
+                <tr>
+                    <th>生育保险</th>
+                    <th>
+                        <el-switch
+                                v-model="value5"
+                                active-color="#B7E0F6"
+                                active-text="缴费"
+                                inactive-text="不缴">
+                        </el-switch>
+                    </th>
+                    <th>公司部分补缴形式</th>
+                    <th>
+                        <el-select v-model="value" size="small" clearable :disabled="!value5" placeholder="请选择">
+                            <el-option
+                                    v-for="item in options"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </th>
+                </tr>
+                <tr>
+                    <th>大额医疗</th>
+                    <th>
+                        <el-switch
+                                v-model="value6"
+                                active-color="#B7E0F6"
+                                active-text="缴费"
+                                inactive-text="不缴">
+                        </el-switch>
+                    </th>
+                    <th>公司部分补缴形式</th>
+                    <th>
+                        <el-select v-model="value" size="small" clearable :disabled="!value6" placeholder="请选择">
+                            <el-option
+                                    v-for="item in options"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </th>
+                </tr>
+                <tr>
+                    <th>公积金</th>
+                    <th>
+                        <el-switch
+                                v-model="value7"
+                                active-color="#B7E0F6"
+                                active-text="缴费"
+                                inactive-text="不缴">
+                        </el-switch>
+                    </th>
+                    <th>公司部分补缴形式</th>
+                    <th>
+                        <el-select v-model="value" size="small" clearable :disabled="!value7" placeholder="请选择">
+                            <el-option
+                                    v-for="item in options"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </th>
+                </tr>
+            </table>
+            <div class="overpay-staff-title">补 缴 对 象</div>
+            <el-table
+                    max-height="450"
+                    size="mini"
+                    :header-cell-style="tableHeaderColor"
+                    border="true"
+                    ref="multipleTables"
+                    :data="tableData"
+                    tooltip-effect="dark"
+                    style="width: 100%; margin-bottom: 15px;">
+                <el-table-column
+                        align="center"
+                        type="selection"
+                        width="50">
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="unumber"
+                        label="工号"
+                        show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="name"
+                        label="姓名"
+                        width="80"
+                        show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="department_name"
+                        label="部门"
+                        show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column
+                        fixed
+                        align="center"
+                        prop="payAccount"
+                        label="缴纳账户"
+                        show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="payLand"
+                        label="社保缴纳地"
+                        show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="householdType"
+                        label="户口类型"
+                        show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="payBase"
+                        label="社保基数"
+                        show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        prop="fondBase"
+                        label="公积金基数"
+                        show-overflow-tooltip>
+                </el-table-column>
+            </el-table>
+            <div class="overpay-bth">
+                <el-button @click="checkBtn(0)" type="warning">取 消</el-button>
+                <el-button @click="checkBtn(1)" type="primary">保 存</el-button>
+            </div>
+        </div>
+    </div>
+</div>

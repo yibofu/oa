@@ -1,0 +1,58 @@
+define([
+    'text!staff/component/staff-con.html',
+    'WebCommon/api',
+
+    'staff/component/staff-list',
+    'staff/staff-add/staff-add',
+    'staff/staff-info/staff-info',
+    'jquery',
+    'css!staff/component/staff-con.css'
+], function(
+    tpl,
+    Api,
+    StaffList,
+    StaffAdd,
+    StaffInfo,
+    $
+){
+
+    return {
+        template: tpl,
+        data: function(){
+            return {
+                btnText:'button',
+                activeName: 'first',
+                staffPage: 2,
+            };
+        },
+        components: {
+            StaffList: StaffList,
+            StaffAdd: StaffAdd,
+            StaffInfo: StaffInfo
+        },
+        computed: {
+            sidebar: function() {
+                // return this.$store.state.app.sidebar
+            }
+        },
+        created: function () {
+            var obj = this;
+
+
+        },
+        methods: {
+
+            init: function () {
+            },
+            handleClick: function(tab, event) {
+                console.log(tab, event);
+            },
+            changeStaffPage: function (index) {
+                this.staffPage = index;
+            },
+        },
+        mounted: function(){
+            this.init();
+        }
+    };
+});

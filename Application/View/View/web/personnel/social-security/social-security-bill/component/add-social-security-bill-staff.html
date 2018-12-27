@@ -1,0 +1,41 @@
+<div v-if="isShow" class="add-social-security-staff">
+    <div class="add-social-security-outline-staff">
+        <div class="position-title">添 加 员 工</div>
+        <div class="line-staff-in">
+            <span style="font-size: 16px;">姓 名: </span>
+            <el-select v-model="value" size="small" filterable placeholder="请选择">
+                <el-option
+                        v-for="item in tableData"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
+        </div>
+        <div class="line-staff-in">
+            <span style="font-size: 16px;">部 门: </span><span style="font-size: 16px;">{{staffInfo.deparment_name}}</span>
+        </div>
+        <div class="line-staff-in">
+            <span style="font-size: 16px;">社保缴纳地: </span><span style="font-size: 16px;">{{staffInfo.payLand}}</span>
+        </div>
+        <div class="line-staff-in">
+            <span style="font-size: 16px;">户口类型: </span><span style="font-size: 16px;">{{staffInfo.householdType}}</span>
+        </div>
+        <div class="line-staff-in">
+            <span style="font-size: 16px;">社保基数: </span><span style="font-size: 16px;">{{staffInfo.payBase}}</span>
+        </div>
+        <div class="line-staff-in">
+            <span style="font-size: 16px;">社保起始缴纳月: </span><span style="font-size: 16px;">{{staffInfo.payBaseSrarting}}</span>
+        </div>
+        <div class="line-staff-in">
+            <span style="font-size: 16px;">公积金基数: </span><span style="font-size: 16px;">{{staffInfo.foudBase}}</span>
+        </div>
+        <div class="line-staff-in">
+            <span style="font-size: 16px;">公积金起始缴纳月: </span><span style="font-size: 16px;">{{staffInfo.fundStarting}}</span>
+        </div>
+        <div class="btn-place">
+            <el-button @click="checkBtn(0)" type="warning">取 消</el-button>
+            <el-button v-if="isCheck" @click="checkBtn(1)" type="primary">保 存</el-button>
+        </div>
+    </div>
+</div>

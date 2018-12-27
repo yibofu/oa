@@ -1,0 +1,397 @@
+<?php
+
+namespace Manage\Controller;
+
+use Common\Controller\BaseController;
+use Think\Page;
+use Think\Upload;
+
+class TeamworkController extends BaseController
+{
+    //查看全部的方法
+    public function teamwork()
+    {
+        if (I("emergency")) {
+            $map['emergency'] = I("emergency");
+        }
+        $acceptancetimeStar = strtotime(I("acceptancetimeStar"));
+
+        $acceptancetimeEnd = strtotime(I("acceptancetimeEnd"));
+        if ($acceptancetimeStar != '' && $acceptancetimeEnd != '') {
+            $map['acceptancetime'] = array('between', "$acceptancetimeStar,$acceptancetimeEnd");
+        }
+        if (I("status")) {
+            $map['status'] = I("status");
+        }
+        if (I("operator_name")) {
+            $map['operator_name'] = I("operator_name");
+        }
+        $map['is_close'] = "0";
+        $pages = I("pages");
+        $manage = D("manage");
+        $count = $manage->table("oa_manage as a")->join("oa_operator as b on b.id=a.operator_name")->join("oa_status as c on c.id=a.status")
+            ->join("oa_operator as d on d.id=a.designatedPerson")
+            ->field("a.id,a.demand_name,a.emergency,d.name as designatedPerson,b.name as operator_name,a.submitter,c.develop_status as status,a.submittime,a.acceptancetime")
+            ->where($map)->count();
+
+        $page = new Page($count, $pages);
+        $totalPages = ceil($count / $pages);
+        $page->totalPages = $totalPages;
+        $pageNum = I("post.pageNum");
+        /*
+         * $pageNum是当前页数
+         * $pages是每页显示的总条数
+         */
+        if ($pageNum) {
+            $pageNum;
+        } else {
+            $pageNum = 1;
+        }
+        $offset = ($pageNum - 1) * $pages;
+        $list = $manage->table("oa_manage as a")->join("oa_operator as b on b.id=a.operator_name")->join("oa_status as c on c.id=a.status")
+            ->join("oa_operator as d on d.id=a.designatedPerson")
+            ->field("a.id,a.demand_name,a.emergency,d.name as designatedPerson,b.name as operator_name,a.submitter,c.develop_status as status,a.submittime,a.acceptancetime")
+            ->where($map)->order('a.acceptancetime asc')->limit($offset, $pages)->select();
+        foreach ($list as &$val) {
+            $val['submittime'] = date('Y-m-d', $val['submittime']);
+            $val['acceptancetime'] = date('Y-m-d', $val['acceptancetime']);
+        }
+        $result = array(
+            'page' => $page,
+            'pageNum' => $pageNum,
+            'result' => $list
+        );
+        self::jsons($error = 0, $result);
+    }
+
+    //增加工单的方法
+    public function add()
+    {
+        $data['demand_name'] = I("post.demand_name");
+        $data['emergency'] = I("post.emergency");
+        $data['designatedPerson'] = I("post.designatedPerson");
+        $data['operator_name'] = I("post.operator_name");
+        $data['status'] = I("post.status");
+        $data['submitter'] = I("post.submitter");
+        $data['submittime'] = time();
+        $data['acceptancetime'] = strtotime(I("post.acceptancetime"));
+        $data['describe'] = I("post.describe");
+        $data['file'] = I("post.file");
+        $data['file'] = implode(",", $data['file']);
+        $manage = D("manage");
+        $datas = $manage->create($data);
+        if ($datas) {
+            $result = $manage->add($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //上传文件接口
+    public function upload()
+    {
+        $upload = new \Think\Upload();
+        $upload->maxSize = 3145728 ;
+        $upload->exts = array('jpg', 'gif', 'png', 'jpeg', 'xlsx', 'txt', 'doc', 'docx');// 设置附件上传类型
+        $upload->rootPath = './Public/Uploads/';
+        $upload->saveName = time().rand(10000,99999);
+        $info = $upload->upload();
+        if(!$info) {
+            $this->error($upload->getError());
+        }else{
+            $data=array();
+            foreach($info as $key=>$file){
+               $data[] = "/Public/Uploads/".$file['savepath'].$file['savename'];
+            }
+        }
+        if ($data) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $data);
+    }
+
+    //选中一条查看的方法
+    public function check()
+    {
+        $id = I("get.id");
+        $manage = D("manage");
+        $result = $manage->table("oa_manage as a")->join("oa_operator as b on b.id=a.operator_name")->join("oa_status as c on c.id=a.status")
+            ->join("oa_operator as d on d.id=a.designatedPerson")
+            ->field("a.id,a.demand_name,a.emergency,a.describe,d.name as designatedPerson,b.name as operator_name,a.submitter,c.develop_status as status,a.submittime,a.acceptancetime,a.file")
+            ->where("a.id = " . $id)->find();
+        if($result["file"]){
+            $list=explode(",",$result["file"]);
+            $result["file"] = $list;
+        }else{
+            $result["file"] = null;
+        }
+        $result['submittime'] = date('Y-m-d', $result['submittime']);
+        $result['acceptancetime'] = date('Y-m-d', $result['acceptancetime']);
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //修改数据的方法
+    public function update()
+    {
+        $id = I("post.id");
+        $data['demand_name'] = I("post.demand_name");
+        $data['emergency'] = I("post.emergency");
+        $data['designatedPerson'] = I("post.designatedPerson");
+        $data['operator_name'] = I("post.operator_name");
+        $data['status'] = I("post.status");
+        $data['submitter'] = I("post.submitter");
+        $data['submittime'] = time();
+        $data['acceptancetime'] = strtotime(I("post.acceptancetime"));
+        $data['describe'] = I("post.describe");
+        $data['file'] =  I("post.file");
+        $data['file'] = implode(",", $data['file']);
+        $manage = D("manage");
+        $datas = $manage->create($data);
+        if ($datas) {
+            $result = $manage->where("id = " . $id)->save($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //下拉框显示操作人姓名
+    public function operatorName()
+    {
+        $operator = D("operator");
+        $result = $operator->field('id,name')->select();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //删除方法
+    public function delete()
+    {
+        $id = I("get.id");
+        $length = strlen($id);
+        $manage = D("manage");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $result = $manage->where($where)->delete();
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //查询状态的接口
+    public function status()
+    {
+        $status = D("status");
+        $list = $status->field('id,develop_status')->select();
+        $manage = D("manage");
+        $statusNum = $manage->field('id,status,is_close')->where("is_close='0'")->group('status')->select();
+        foreach ($list as $k => $val) {
+            foreach ($statusNum as $key => $value) {
+                $statusClass["status"] = $value["status"];
+                $number = $manage->field("status")->where("status=" . $statusClass["status"])->count();
+                $statusCount[$statusClass["status"]] = $number;
+                if ($val['id'] == $value['status']) {
+                    $list[$k]['statusCount'] = $statusCount[$statusClass["status"]];
+                }
+            }
+        }
+        $result = array(
+            'result' => $list,
+        );
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+
+    //下载接口
+    public function download()
+    {
+        $id = I("post.id");
+        if ($id !== "") {
+            $manage = D("manage");
+            $file = $manage->field('id,file')->where("id=" . $id)->find();
+            $fileUrls = $file["file"];
+            $fileUrl = explode(",",$fileUrls);
+            foreach($fileUrl as $key=>$value){
+                $result[$key] = $_SERVER['SERVER_NAME'].$value;
+            }
+            if ($fileUrl) {
+                $error = 0;
+            } else {
+                $error = 1;
+            }
+            self::jsons($error, $result);
+        }
+    }
+
+    //关闭接口
+    public function close()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $manage = D("manage");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $data["is_close"] = "1";
+        $result = $manage->where($where)->save($data);
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //取消关闭的接口
+    public function cancelClosed()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $manage = D("manage");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $data["is_close"] = "0";
+        $result = $manage->where($where)->save($data);
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //点击关闭显示已经关闭的数据
+    public function alreadyClosed()
+    {
+        if (I("emergency")) {
+            $map['emergency'] = I("emergency");
+        }
+        $acceptancetimeStar = strtotime(I("acceptancetimeStar"));
+
+        $acceptancetimeEnd = strtotime(I("acceptancetimeEnd"));
+        if ($acceptancetimeStar != '' && $acceptancetimeEnd != '') {
+            $map['acceptancetime'] = array('between', "$acceptancetimeStar,$acceptancetimeEnd");
+        }
+        if (I("status")) {
+            $map['status'] = I("status");
+        }
+        if (I("operator_name")) {
+            $map['operator_name'] = I("operator_name");
+        }
+        $map['is_close'] = "1";
+        $pages = I("pages");
+        $manage = D("manage");
+        $count = $manage->table("oa_manage as a")->join("oa_operator as b on b.id=a.operator_name")->join("oa_status as c on c.id=a.status")
+            ->join("oa_operator as d on d.id=a.designatedPerson")
+            ->field("a.id,a.demand_name,a.emergency,d.name as designatedPerson,b.name as operator_name,a.submitter,c.develop_status as status,a.submittime,a.acceptancetime")
+            ->where($map)->count();
+
+        $page = new Page($count, $pages);
+        $totalPages = ceil($count / $pages);
+        $page->totalPages = $totalPages;
+        $pageNum = I("post.pageNum");
+        /*
+         * $pageNum是当前页数
+         * $pages是每页显示的总条数
+         */
+        if ($pageNum) {
+            $pageNum;
+        } else {
+            $pageNum = 1;
+        }
+        $offset = ($pageNum - 1) * $pages;
+        $list = $manage->table("oa_manage as a")->join("oa_operator as b on b.id=a.operator_name")->join("oa_status as c on c.id=a.status")
+            ->join("oa_operator as d on d.id=a.designatedPerson")
+            ->field("a.id,a.demand_name,a.emergency,d.name as designatedPerson,b.name as operator_name,a.submitter,c.develop_status as status,a.submittime,a.acceptancetime")
+            ->where($map)->order('a.id desc')->limit($offset, $pages)->select();
+        foreach ($list as &$val) {
+            $val['submittime'] = date('Y-m-d', $val['submittime']);
+            $val['acceptancetime'] = date('Y-m-d', $val['acceptancetime']);
+        }
+        $result = array(
+            'page' => $page,
+            'pageNum' => $pageNum,
+            'result' => $list
+        );
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+
+    //批量修改状态
+    public function updateStatus()
+    {
+        $id = I("post.id");
+        $length = strlen($id);
+        $manage = D("manage");
+        if ($length == 1) {
+            $where = 'id=' . $id;
+        } else {
+            $id = array($id);
+            $where = 'id in(' . implode(',', $id) . ')';
+        }
+        $status = I("post.status");
+        $designatedPerson = I("post.designatedPerson");
+        $data['submittime'] = time();
+        if($status == ""){
+            $data["designatedPerson"] = I("post.designatedPerson");
+            $datas = $manage->create($data);
+            $result = $manage->where($where)->save($datas);
+        }else if($designatedPerson == ""){
+            $data["status"] = I("post.status");
+            $datas = $manage->create($data);
+            $result = $manage->where($where)->save($datas);
+        }else{
+            $data["status"] = I("post.status");
+            $data["designatedPerson"] = I("post.designatedPerson");
+            $datas = $manage->create($data);
+            $result = $manage->where($where)->save($datas);
+        }
+        if ($result) {
+            $error = 0;
+        } else {
+            $error = 1;
+        }
+        self::jsons($error, $result);
+    }
+}

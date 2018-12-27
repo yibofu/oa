@@ -1,0 +1,40 @@
+{
+  "name": "build-v2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "dmg",
+  "license": "MIT",
+  "scripts": {
+    "build:font": "node build-font.js",
+    "build:font-fz": "node build-font.js --text-file=./font-fangzheng.txt fz v2/web",
+    "build:vendor": "node build.js --config=./build-config-corly.js",
+    "build:all": "node build.js --config=./build-config-all.js",
+    "build:lize": "node build.js --config=./build-config-lize.js",
+    "build:corly": "node build.js --config=./build-config-corly.js",
+    "build:css-base64": "node css-base64.js"
+  },
+  "dependencies": {
+    "clean-webpack-plugin": "^0.1.19",
+    "commander": "^2.16.0",
+    "copy-webpack-plugin": "^4.5.1",
+    "css-loader": "^0.28.10",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^1.1.11",
+    "flat": "^4.1.0",
+    "fontmin": "^0.9.6",
+    "html-to-text": "^4.0.0",
+    "html-webpack-plugin": "^3.0.6",
+    "imagemin-svgo": "^6.0.0",
+    "lodash": "^4.17.10",
+    "ora": "^2.1.0",
+    "style-loader": "^0.20.3",
+    "text-loader": "^0.0.1",
+    "url-loader": "^1.0.1",
+    "webpack": "^3.10.0",
+    "webpack-merge": "^4.1.3"
+  },
+  "devDependencies": {},
+  "browserslist": [
+    "defaults"
+  ]
+}

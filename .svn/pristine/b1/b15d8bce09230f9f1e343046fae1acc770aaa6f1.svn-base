@@ -1,0 +1,15 @@
+define([
+    'department/department',
+    'staff/staff'
+    // ,'demo/demo'
+], function(
+    Department,
+    Staff
+
+    // , Demo
+){
+    return [
+        { path: '/index?debug=6', component: Department, name: 'department' },
+        { path: '/staff?debug=6', component: Staff, name: 'staff' },
+    ];
+});

@@ -1,0 +1,646 @@
+<div>
+    <div class="main-container" style="padding: 0 10px 0 10px; box-sizing: border-box;">
+        <section class="app-main">
+            <div class="app-container">
+                <div class="filter-container" style="margin-top: 10px;">
+                    <button @click="chooseBtn(0)" type="button" :class="{'el-button--primary': btnClass==0}" class="el-button filter-item el-button--medium"
+                            style="margin-bottom: 10px;">
+                        <!--<i class="el-icon-setting"></i>-->
+                        <span>全部</span>
+                    </button>
+                    <button @click="chooseBtn(1)" type="button" :class="{'el-button--primary': btnClass==1}" class="el-button filter-item el-button--medium"
+                            style="margin-bottom: 10px;">
+                        <!--<i class="el-icon-setting"></i>-->
+                        <span>我的任务</span>
+                    </button>
+                    <button @click="chooseBtn(2)" type="button" :class="{'el-button--primary': btnClass==2}" class="el-button filter-item el-button--medium"
+                            style="margin-bottom: 10px;">
+                        <!--<i class="el-icon-setting"></i>-->
+                        <span>我的创建</span>
+                    </button>
+                    <button type="button" class="el-button filter-item el-button--medium"
+                            style="margin-bottom: 10px;">
+                        <!--<i class="el-icon-setting"></i>-->
+                        <span>关闭</span>
+                    </button>
+                </div>
+                <div class="filter-container">
+                    <!--<div class="filter-item el-input el-input&#45;&#45;medium" style="width: 200px;">-->
+                        <!--<input type="text" autocomplete="off" placeholder="标题" class="el-input__inner">-->
+                    <!--</div>-->
+                    <div class="el-select filter-item el-select--medium" style="width: 130px;">
+                        <div class="el-input el-input--medium el-input--suffix" @click="openQuick">
+                            <input type="text" readonly="readonly" autocomplete="off" placeholder="紧急程度"
+                                   class="el-input__inner" v-model="checkInfo.emergency">
+                            <span class="el-input__suffix">
+                                <span class="el-input__suffix-inner">
+                                    <i class="el-select__caret el-input__icon el-icon-arrow-up"></i>
+                                </span>
+                            </span>
+                        </div>
+                        <div class="el-select-dropdown el-popper" style="min-width: 90px;" v-if="quick">
+                            <div class="el-scrollbar" style="">
+                                <div class="el-select-dropdown__wrap el-scrollbar__wrap"
+                                     style="margin-bottom: -17px; margin-right: -17px;">
+                                    <ul v-for="(item, index) in quickShow" :key="index" class="el-scrollbar__view el-select-dropdown__list">
+                                        <li class="el-select-dropdown__item" @click="closeQuick(1,item,index)">
+                                            <span>{{item}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="el-scrollbar__bar is-horizontal">
+                                    <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                                </div>
+                                <div class="el-scrollbar__bar is-vertical">
+                                    <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="el-select filter-item el-select--medium" style="width: 100px;">
+                        <div class="el-input el-input--medium el-input--suffix" @click="openDespel">
+                            <input type="text" readonly="readonly" autocomplete="off" placeholder="指派人"
+                                   class="el-input__inner" v-model="checkInfo.designatedPersonName">
+                            <span class="el-input__suffix">
+                                <span class="el-input__suffix-inner">
+                                    <i class="el-select__caret el-input__icon el-icon-arrow-up"></i>
+                                </span>
+                            </span>
+                        </div>
+                        <div v-if="openDes" class="el-select-dropdown el-popper" style="min-width: 140px;">
+                            <div class="el-scrollbar" style="">
+                                <div class="el-select-dropdown__wrap el-scrollbar__wrap"
+                                     style="margin-bottom: -17px; margin-right: -17px;">
+                                    <ul v-for="(item, index) in checkOperator" class="el-scrollbar__view el-select-dropdown__list">
+                                        <li class="el-select-dropdown__item" @click="closeQuick(2,item,index)">
+                                            <span>{{item.name}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="el-scrollbar__bar is-horizontal">
+                                    <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                                </div>
+                                <div class="el-scrollbar__bar is-vertical">
+                                    <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="el-select filter-item el-select--medium" style="width: 100px;">
+                        <div class="el-input el-input--medium el-input--suffix" @click="openStatusList">
+                            <input type="text" readonly="readonly" autocomplete="off" placeholder="状态"
+                                   class="el-input__inner" v-model="checkInfo.statusInfo">
+                            <span class="el-input__suffix">
+                                <span class="el-input__suffix-inner">
+                                    <i class="el-select__caret el-input__icon el-icon-arrow-up"></i>
+                                </span>
+                            </span>
+                        </div>
+                        <div v-if="openStatus" class="el-select-dropdown el-popper" style="min-width: 140px;">
+                            <div class="el-scrollbar" style="">
+                                <div class="el-select-dropdown__wrap el-scrollbar__wrap"
+                                     style="margin-bottom: -17px; margin-right: -17px;">
+                                    <ul v-for="(item, index) in checkStatus" class="el-scrollbar__view el-select-dropdown__list">
+                                        <li class="el-select-dropdown__item" @click="closeQuick(4,item,index)">
+                                            <span>{{item.develop_status}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="el-scrollbar__bar is-horizontal">
+                                    <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                                </div>
+                                <div class="el-scrollbar__bar is-vertical">
+                                    <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="el-select filter-item el-select--medium" style="width: 100px;">
+                        <div class="el-input el-input--medium el-input--suffix" @click="openOperator">
+                            <input type="text" readonly="readonly" autocomplete="off" placeholder="操作人"
+                                   class="el-input__inner" v-model="checkInfo.operator">
+                            <span class="el-input__suffix">
+                                <span class="el-input__suffix-inner">
+                                    <i class="el-select__caret el-input__icon el-icon-arrow-up"></i>
+                                </span>
+                            </span>
+                        </div>
+                        <div v-if="openOper" class="el-select-dropdown el-popper" style="min-width: 140px;">
+                            <div class="el-scrollbar" style="">
+                                <div class="el-select-dropdown__wrap el-scrollbar__wrap"
+                                     style="margin-bottom: -17px; margin-right: -17px;">
+                                    <ul v-for="(item, index) in checkOperator" class="el-scrollbar__view el-select-dropdown__list">
+                                        <li class="el-select-dropdown__item" @click="closeQuick(3,item,index)">
+                                            <span>{{item.name}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="el-scrollbar__bar is-horizontal">
+                                    <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                                </div>
+                                <div class="el-scrollbar__bar is-vertical">
+                                    <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="el-select filter-item el-select--medium" style="width: 140px;">
+                        <div class="el-input el-input--medium el-input--suffix">
+                            <input type="text" readonly="readonly" autocomplete="off" placeholder="预计时间(开始)"
+                                   class="el-input__inner" v-model="checkInfo.acceptancetimeStar">
+                            <span class="el-input__suffix">
+                                <span class="el-input__suffix-inner">
+                                    <i class="el-select__caret el-input__icon el-icon-arrow-up"></i>
+                                </span>
+                            </span>
+                            <bs-date-time-pickers type="text" v-model="checkInfo.acceptancetimeStar" ></bs-date-time-pickers>
+                        </div>
+                    </div>
+                    <div class="el-select filter-item el-select--medium" style="width: 140px;">
+                        <div class="el-input el-input--medium el-input--suffix">
+                            <input type="text" readonly="readonly" autocomplete="off" placeholder="预计时间(结束)"
+                                   class="el-input__inner" v-model="checkInfo.acceptancetimeEnd">
+                            <span class="el-input__suffix">
+                                <span class="el-input__suffix-inner">
+                                    <i class="el-select__caret el-input__icon el-icon-arrow-up"></i>
+                                </span>
+                            </span>
+                            <bs-date-time-pickers type="text" v-model="checkInfo.acceptancetimeEnd" ></bs-date-time-pickers>
+                        </div>
+                    </div>
+                    <button @click="clearTime" type="button" class="el-button filter-item el-button--success el-button--medium">
+                        <span>清空时间</span>
+                    </button>
+                    <button @click="onCheck" type="button" class="el-button filter-item el-button--primary el-button--medium">
+                        <i class="el-icon-search"></i>
+                        <span>搜索</span>
+                    </button>
+                    <button @click="productNew" type="button" class="el-button filter-item el-button--primary el-button--medium"
+                            style="margin-left: 10px;">
+                        <i class="el-icon-edit"></i>
+                        <span>创建任务</span>
+                    </button>
+                    <button @click="teamworksDelete" type="button" class="el-button filter-item el-button--danger el-button--medium"
+                            style="margin-left: 10px;">
+                        <i class="el-icon-delete"></i>
+                        <span>批量删除</span>
+                    </button>
+                </div>
+                <div class="el-table el-table--fit el-table--border el-table--enable-row-hover el-table--enable-row-transition el-table--medium"
+                     style="width: 100%; margin-top: 20px; margin-bottom: 20px;">
+                    <div class="hidden-columns">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <div class="el-table__header-wrapper">
+                        <table cellspacing="0" cellpadding="0" border="0" class="el-table__header"
+                               style="width: 100%;">
+                            <colgroup>
+                                <col name="el-table_8_column_32" width="3%">
+                                <col name="el-table_8_column_33" width="5%">
+                                <col name="el-table_8_column_34" width="6%">
+                                <col name="el-table_8_column_35" width="15%">
+                                <col name="el-table_8_column_36" width="9%">
+                                <col name="el-table_8_column_37" width="6%">
+                                <col name="el-table_8_column_38" width="6%">
+                                <col name="el-table_8_column_39" width="6%">
+                                <col name="el-table_8_column_40" width="9%">
+                                <col name="el-table_8_column_41" width="6%">
+                                <col name="el-table_8_column_42" width="9%">
+                                <!--<col name="gutter" width="0">-->
+                            </colgroup>
+                            <thead class="has-gutter">
+                            <tr class="">
+                                <th colspan="1" rowspan="1" class="el-table_8_column_32  is-center   is-leaf">
+                                    <div class="cell">
+                                        <span class="el-checkbox__input" :class="{'is-checked': checkAll}" v-model="checkAll" @click="handleCheckAllChange">
+                                            <span class="el-checkbox__inner"></span>
+                                            <input type="checkbox" class="el-checkbox__original" value="">
+                                        </span>
+                                    </div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_8_column_33  is-center   is-leaf">
+                                    <div class="cell">ID</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_8_column_34  is-center   is-leaf">
+                                    <div class="cell">紧急程度</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_8_column_35  is-center  is-leaf">
+                                    <div class="cell">需求模块</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_8_column_36  is-center   is-leaf">
+                                    <div class="cell">预计验收时间</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_8_column_37  is-center  is-leaf">
+                                    <div class="cell">指派人</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_8_column_38  is-center   is-leaf">
+                                    <div class="cell">状态</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_8_column_39  is-center  is-leaf">
+                                    <div class="cell">提交人</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_8_column_40  is-center is-leaf">
+                                    <div class="cell">提交时间</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_8_column_41   is-center  is-leaf">
+                                    <div class="cell">操作人</div>
+                                </th>
+                                <th colspan="1" rowspan="1"
+                                    class="el-table_8_column_42  is-center small-padding fixed-width  is-leaf">
+                                    <div class="cell">操作</div>
+                                </th>
+                                <th class="gutter" style="width: 0px; display: none;"></th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="el-table__body-wrapper is-scrolling-none">
+                        <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 100%;">
+                            <colgroup>
+                                <col name="el-table_8_column_32" width="3%">
+                                <col name="el-table_8_column_33" width="5%">
+                                <col name="el-table_8_column_34" width="6%">
+                                <col name="el-table_8_column_35" width="15%">
+                                <col name="el-table_8_column_36" width="9%">
+                                <col name="el-table_8_column_37" width="6%">
+                                <col name="el-table_8_column_38" width="6%">
+                                <col name="el-table_8_column_39" width="6%">
+                                <col name="el-table_8_column_40" width="9%">
+                                <col name="el-table_8_column_41" width="6%">
+                                <col name="el-table_8_column_42" width="9%">
+                            </colgroup>
+                            <tbody>
+                            <tr class="el-table__row" v-for="(item, index) in tableData.result" :key="index">
+                                <td rowspan="1" colspan="1" class="el-table_8_column_32 is-center ">
+                                    <div class="cell">
+                                        <span class="el-checkbox__input ischecked" :class="{'is-checked': item.checked}" v-model="checkAll" @click="handleCheckedCitiesChange(item.id,index)">
+                                            <span class="el-checkbox__inner"></span>
+                                            <input type="checkbox" class="el-checkbox__original" value="">
+                                        </span>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_8_column_33 is-center ">
+                                    <div class="cell">
+                                        <span>{{item.id}}</span>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_8_column_34 is-center  status-col">
+                                    <div class="cell">
+                                        <span class="el-tag el-tag--success el-tag--medium">{{item.emergency}}</span>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_8_column_35">
+                                    <div class="cell">
+                                        <span class="link-type">{{item.demand_name}}</span>
+                                        <!--<span class="el-tag el-tag--medium">USA&lt;!&ndash;&ndash;&gt;</span>-->
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_8_column_36 is-center ">
+                                    <div class="cell">
+                                        <span>{{item.acceptancetime}}</span>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_8_column_37 is-center ">
+                                    <div class="cell">
+                                        <span>{{item.designatedPerson}}</span>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_8_column_38 is-center">
+                                    <div class="cell">
+                                        <span>{{item.status}}</span>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_8_column_39 is-center ">
+                                    <div class="cell">
+                                        <span class="link-type">{{item.submitter}}</span>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_8_column_40 is-center ">
+                                    <div class="cell">
+                                        <span class="link-type">{{item.submittime}}</span>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_8_column_41 is-center ">
+                                    <div class="cell">
+                                        <span class="link-type">{{item.operator_name}}</span>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1"
+                                    class="el-table_8_column_42 is-center small-padding fixed-width">
+                                    <div class="cell">
+                                        <button type="button" class="el-button el-button--primary el-button--mini" @click="teamworkEdit(item.id)">
+                                            <span>查看</span>
+                                        </button>
+                                        <button type="button" class="el-button el-button--danger el-button--mini" @click="teamworkDelete(index)">
+                                            <span>删除</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="el-table__column-resize-proxy" style="display: none;"></div>
+                    <div class="el-loading-mask" style="display: none;">
+                        <div class="el-loading-spinner">
+                            <svg viewBox="25 25 50 50" class="circular">
+                                <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="pagination-container">
+                    <div class="el-pagination is-background" style="">
+                        <span class="el-pagination__total">共 {{workNum}} 条</span>
+                        <span class="el-pagination__sizes">
+                            <div class="el-select el-select--mini">
+                                <div class="el-select-dropdown el-popper" v-if="isPageShow" style="min-width: 110px; transform-origin: center bottom 0px; z-index: 2017; position: absolute; bottom: 35px;" x-placement="top-start">
+                                    <div class="el-scrollbar" style="">
+                                        <div class="el-select-dropdown__wrap el-scrollbar__wrap" style="margin-bottom: -17px; margin-right: -17px;">
+                                            <ul class="el-scrollbar__view el-select-dropdown__list"><!---->
+                                                <li @click="pageShow(10)" class="el-select-dropdown__item" :class="{selected: pageInfo.limit==10}">
+                                                    <span>10条/页</span>
+                                                </li>
+                                                <li @click="pageShow(20)" class="el-select-dropdown__item" :class="{selected: pageInfo.limit==20}">
+                                                    <span>20条/页</span>
+                                                </li>
+                                                <li @click="pageShow(30)" class="el-select-dropdown__item" :class="{selected: pageInfo.limit==30}">
+                                                    <span>30条/页</span>
+                                                </li>
+                                                <li @click="pageShow(50)" class="el-select-dropdown__item" :class="{selected: pageInfo.limit==50}">
+                                                    <span>50条/页</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="el-scrollbar__bar is-horizontal">
+                                            <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                                        </div>
+                                        <div class="el-scrollbar__bar is-vertical">
+                                            <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                                        </div>
+                                    </div><!---->
+                                    <div x-arrow="" class="popper__arrow" style="left: 35px;"></div>
+                                </div>
+                                <div @click="changePageShow" class="el-input el-input--mini el-input--suffix"><!---->
+                                    <input type="text"
+                                           readonly="readonly"
+                                           autocomplete="off"
+                                           class="el-input__inner"
+                                           v-model="pageInfo.limit+'条/页'">
+                                    <span class="el-input__suffix">
+                                        <span class="el-input__suffix-inner">
+                                            <i class="el-select__caret el-input__icon el-icon-arrow-up"></i>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </span>
+                        <button @click="prevPage" type="button" :disabled="thePage==1" class="btn-prev">
+                            <i class="el-icon el-icon-arrow-left"></i>
+                        </button>
+                        <ul class="el-pager" v-for="(item, index) in pageInfo.totalPage" :key="index">
+                            <li @click="toThePage(item)" class="number" :class="{active: item==thePage}">{{item}}</li>
+                        </ul>
+                        <button @click="nextPage" type="button" :disabled="thePage==pageInfo.totalPage" class="btn-next">
+                            <i class="el-icon el-icon-arrow-right"></i>
+                        </button>
+                        <span class="el-pagination__total" style="margin-left: 15px;">共 {{tableData.page.totalPages}} 页</span>
+                    </div>
+                </div>
+                <div v-if="editShow" class="el-dialog__wrapper" style="z-index: 2106;background: rgba(0,0,0,0.5);">
+                    <div class="el-dialog" style="margin-top: 15vh; width:1000px;">
+                        <div class="el-dialog__header">
+                            <button v-if="btnStatus==0" @click="btnEdit" type="button" class="el-button filter-item el-button--primary el-button--medium"
+                                    style="margin-bottom: 10px;">
+                                <!--<i class="el-icon-setting"></i>-->
+                                <span>编 辑</span>
+                            </button>
+                            <button v-else-if="btnStatus==1" type="button" class="el-button el-button--default el-button--medium">
+                                <span>编 辑</span>
+                            </button>
+                            <button v-else-if="btnStatus==2" type="button" class="el-button el-button--default el-button--medium">
+                                <span>新 建</span>
+                            </button>
+                        </div>
+                        <div class="el-dialog__body" style="padding-top: 10px">
+                            <form action="" style="width:100%;">
+                                <table border="1" class="product" style="border-right: 5px;border-collapse:collapse;">
+                                    <tr style="height: 30px;">
+                                        <th width="10%">ID</th>
+                                        <th width="10%">
+                                            <input v-if="product.id" type="text" v-model="product.id" readonly >
+                                            <input v-else type="text" value="新建" readonly >
+                                        </th>
+                                        <th width="10%">提交人</th>
+                                        <th width="10%">
+                                            <input v-if="isEdit" type="text" v-model="product.submitter" >
+                                            <input v-else type="text" v-model="product.submitter" readonly >
+                                        </th>
+                                        <th width="10%">状态</th>
+                                        <th width="30%" @click="chooseStatus">
+                                            <span  style="cursor: pointer; width: 100%; float: left;">
+                                                <div class="el-select el-select--mini">
+                                                    <div class="el-input el-input--mini el-input--suffix" style="cursor: pointer"><!---->
+                                                        <input type="text" v-model="product.statusInfo" readonly placeholder="请选择 >" style="width: 100%;cursor: pointer;">
+                                                    </div>
+                                                    <div class="el-select-dropdown el-popper" v-if="isStatusShow" style="min-width: 110px; transform-origin: center bottom 0px; z-index: 2017; position: absolute; bottom: -280px;" x-placement="top-start">
+                                                        <div class="el-scrollbar" style="">
+                                                            <div class="el-select-dropdown__wrap el-scrollbar__wrap" style="margin-bottom: -17px; margin-right: -17px;">
+                                                                <ul v-for="(item, index) in statusList" :key="index" class="el-scrollbar__view el-select-dropdown__list"><!---->
+                                                                    <li @click.stop="statusShow(item.id,item.develop_status)" class="el-select-dropdown__item" :class="{selected: product.status&&product.status==item.id}">
+                                                                        <span>{{item.develop_status}}</span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="el-scrollbar__bar is-horizontal">
+                                                                <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                                                            </div>
+                                                            <div class="el-scrollbar__bar is-vertical">
+                                                                <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                                                            </div>
+                                                        </div><!---->
+                                                        <div x-arrow="" class="popper__arrow" style="left: 35px;"></div>
+                                                    </div>
+                                                </div>
+                                            </span>
+                                        </th>
+                                    </tr>
+                                    <tr style="height: 30px;">
+                                        <th>需求名称</th>
+                                        <th  colspan="5">
+                                            <input v-if="isEdit" type="text" v-model="product.demand_name" >
+                                            <input v-else type="text" v-model="product.demand_name" readonly >
+                                        </th>
+                                    </tr>
+                                    <tr style="height: 120px;">
+                                        <th>需求描述</th>
+                                        <th  colspan="5">
+                                            <textarea v-if="isEdit" name="" cols="30" rows="10" v-model="product.describe" ></textarea>
+                                            <textarea v-else name="" cols="30" rows="10" v-model="product.describe" readonly ></textarea>
+                                        </th>
+                                    </tr>
+                                    <tr style="height: 30px;">
+                                        <th>附件</th>
+                                        <th colspan="5" style="position: relative; cursor: pointer;">
+                                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; line-height: 30px;">{{product.file||"请选择文件"}}</div>
+                                            <input v-if="isEdit" id="id" name="image" type="file" value="" @change="preview()" class="getImgUrl_file" style="opacity: 0; cursor: pointer;" >
+                                            <!--<input v-else type="file" v-model="product.file" style="opacity: 0; cursor: pointer;" readonly>-->
+                                        </th>
+                                    </tr>
+                                    <tr style="height: 30px;">
+                                        <th>指派人</th>
+                                        <th>
+                                            <span class="el-pagination__sizes" style="cursor: pointer">
+                                                <div class="el-select el-select--mini">
+                                                    <div class="el-select-dropdown el-popper" v-if="isPersonShow" style="min-width: 110px; transform-origin: center bottom 0px; z-index: 2017; position: absolute; bottom: 35px;" x-placement="top-start">
+                                                        <div class="el-scrollbar" style="">
+                                                            <div class="el-select-dropdown__wrap el-scrollbar__wrap" style="margin-bottom: -17px; margin-right: -17px;">
+                                                                <ul v-for="(item, index) in operatorList" :key="index" class="el-scrollbar__view el-select-dropdown__list"><!---->
+                                                                    <li @click="personShow(item.id,item.name)" class="el-select-dropdown__item" :class="{selected: product.designatedPerson&&product.designatedPerson==item.id}">
+                                                                        <span>{{item.name}}</span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="el-scrollbar__bar is-horizontal">
+                                                                <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                                                            </div>
+                                                            <div class="el-scrollbar__bar is-vertical">
+                                                                <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                                                            </div>
+                                                        </div><!---->
+                                                        <div x-arrow="" class="popper__arrow" style="left: 35px;"></div>
+                                                    </div>
+                                                    <div @click="choosePerson" class="el-input el-input--mini el-input--suffix" style="cursor: pointer"><!---->
+                                                        <input type="text" v-model="product.designatedPersonName" readonly placeholder="请选择 >" style="cursor: pointer;">
+                                                    </div>
+                                                </div>
+                                            </span>
+                                        </th>
+                                        <th>优先级</th>
+                                        <th>
+                                            <span class="el-pagination__sizes" style="cursor: pointer">
+                                                <div class="el-select el-select--mini">
+                                                    <div class="el-select-dropdown el-popper" v-if="isEmergencyShow" style="min-width: 110px; transform-origin: center bottom 0px; z-index: 2017; position: absolute; bottom: 35px;" x-placement="top-start">
+                                                        <div class="el-scrollbar" style="">
+                                                            <div class="el-select-dropdown__wrap el-scrollbar__wrap" style="margin-bottom: -17px; margin-right: -17px;">
+                                                                <ul v-for="(item, index) in emergencyList" :key="index" class="el-scrollbar__view el-select-dropdown__list"><!---->
+                                                                    <li @click="emergencyShow(item)" class="el-select-dropdown__item" :class="{selected: product.emergency&&product.emergency==item}">
+                                                                        <span>{{item}}</span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="el-scrollbar__bar is-horizontal">
+                                                                <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                                                            </div>
+                                                            <div class="el-scrollbar__bar is-vertical">
+                                                                <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                                                            </div>
+                                                        </div><!---->
+                                                        <div x-arrow="" class="popper__arrow" style="left: 35px;"></div>
+                                                    </div>
+                                                    <div @click="chooseEmergency" class="el-input el-input--mini el-input--suffix" style="cursor: pointer"><!---->
+                                                        <input type="text" v-model="product.emergency" readonly placeholder="请选择 >" style="cursor: pointer;">
+                                                    </div>
+                                                </div>
+                                            </span>
+                                        </th>
+                                        <!--<th>-->
+                                            <!--<input v-if="isEdit" type="text" v-model="product.emergency" >-->
+                                            <!--<input v-else type="text" v-model="product.emergency" readonly >-->
+                                        <!--</th>-->
+                                        <th>预计验收时间</th>
+                                        <th style="position: relative;">
+                                            <bs-date-time-picker v-if="isEdit" type="text" v-model="product.acceptancetime" ></bs-date-time-picker>
+                                            <bs-date-time-picker v-else type="text" v-model="product.acceptancetime" readonly ></bs-date-time-picker>
+                                        </th>
+                                    </tr>
+                                    <tr style="height: 30px;">
+                                        <th>提交时间</th>
+                                        <th colspan="2">
+                                            <!--<input v-if="isEdit" type="text" v-model="product.submitDate" >-->
+                                            <input v-if="product.submittime" :value="product.submittime||'请提交'" readonly>
+                                            <input v-else value="请提交" readonly>
+                                            <!--<input v-else type="text" v-model="product.submitDate" readonly >-->
+                                        </th>
+                                        <th>操作人</th>
+                                        <th colspan="2" @click="chooseOperator">
+                                            <span  style="cursor: pointer; width: 100%; float: left;">
+                                                <div class="el-select el-select--mini">
+                                                    <div class="el-select-dropdown el-popper" v-show="isOperatorShow" style="min-width: 110px; transform-origin: center bottom 0px; z-index: 2017; position: absolute; bottom: 35px;" x-placement="top-start">
+                                                        <div class="el-scrollbar" style="">
+                                                            <div class="el-select-dropdown__wrap el-scrollbar__wrap" style="margin-bottom: -17px; margin-right: -17px;">
+                                                                <ul v-for="(item, index) in operatorList" :key="index" class="el-scrollbar__view el-select-dropdown__list"><!---->
+                                                                    <li @click.stop="operatorShow(item.id,item.name)" class="el-select-dropdown__item" :class="{selected: product.operator_name&&product.operator_name==item.id}">
+                                                                        <span>{{item.name}}</span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="el-scrollbar__bar is-horizontal">
+                                                                <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                                                            </div>
+                                                            <div class="el-scrollbar__bar is-vertical">
+                                                                <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                                                            </div>
+                                                        </div><!---->
+                                                        <div x-arrow="" class="popper__arrow" style="left: 35px;"></div>
+                                                    </div>
+                                                    <div class="el-input el-input--mini el-input--suffix" style="cursor: pointer"><!---->
+                                                        <input type="text" v-model="product.operator" readonly placeholder="请选择 >" style="width: 100%;cursor: pointer;">
+                                                    </div>
+                                                </div>
+                                            </span>
+                                        </th>
+                                    </tr>
+                                </table>
+                            </form>
+                        </div>
+                        <div class="el-dialog__footer">
+                            <div v-if="isEdit" class="dialog-footer">
+                                <button @click="closeInfo" type="button" class="el-button el-button--default el-button--medium">
+                                    <span>取 消</span>
+                                </button>
+                                <button @click="doEdit" type="button" class="el-button el-button--primary el-button--medium">
+                                    <span>确 定</span>
+                                </button>
+                            </div>
+                            <div v-else class="dialog-footer">
+                                <button @click="downloadInfo(product.id)" type="button" class="el-button el-button--success el-button--medium">
+                                    <span>查看文件</span>
+                                </button>
+                                <button @click="closeInfo" type="button" class="el-button el-button--primary el-button--medium">
+                                    <span>关 闭</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="deleteShow" class="el-dialog__wrapper" style=" z-index: 2106;background: rgba(0,0,0,0.5);">
+                    <div class="el-dialog" style="border-radius: 5px;margin-top: 15vh; width:250px; height: 150px; position: relative;">
+                        <div style="width: 100%; height: 100px; text-align: center; line-height: 110px; font-size: 20px;">是否确认删除</div>
+                        <div style="width: 100%; height: 100%;">
+                            <button @click="doDelete" type="button" class="el-button filter-item el-button--primary el-button--medium"
+                                    style="width: 50%; position: absolute; bottom: 0;left: 0; border-radius: 0 0 0 5px">
+                                <!--<i class="el-icon-setting"></i>-->
+                                <span>确 定</span>
+                            </button>
+                            <button @click="closeDelete" type="button" class="el-button filter-item el-button--default el-button--medium"
+                                    style="width: 50%; position: absolute; bottom: 0;right: 0;border-radius: 0 0 5px 0">
+                                <!--<i class="el-icon-setting"></i>-->
+                                <span>取 消</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

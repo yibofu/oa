@@ -1,0 +1,32 @@
+<div v-if="isShow" class="add-position">
+    <div class="add-position-outline">
+        <div class="position-title" v-if="editWhich!=''">修 改 职 位</div>
+        <div class="position-title" v-else>新 增 职 位</div>
+        <div style="margin-bottom: 15px;">
+            <div style="display: inline-block; line-height: 40px;"><span>职位名称</span></div>
+            <div class="positions-input">
+                <el-input
+                        class="positionss-input"
+                        placeholder="请输入内容"
+                        v-model="positionInfo.name"
+                        clearable>
+                </el-input>
+            </div>
+        </div>
+        <div>
+            <span>所属部门</span>
+            <el-select v-model="positionInfo.oid" filterable placeholder="请选择">
+                <el-option
+                        v-for="item in options"
+                        :key="item.id"
+                        :label="item.department_name"
+                        :value="item.id">
+                </el-option>
+            </el-select>
+        </div>
+        <div class="btn-place">
+            <el-button @click="checkBtn(0)">取 消</el-button>
+            <el-button @click="checkBtn(1)" type="primary">保 存</el-button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+.el-tree{
+    width: 300px;
+    float: left;
+}
+.el-tabs__content{
+    overflow: visible;
+    /*padding-right: 160px;*/
+    box-sizing: border-box;
+}
+.tree-right-table{
+    width: 100%;
+    padding-left: 300px;
+    box-sizing: border-box;
+}

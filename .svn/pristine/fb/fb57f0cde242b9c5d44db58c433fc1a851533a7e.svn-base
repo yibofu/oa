@@ -1,0 +1,67 @@
+define([
+    'text!component/sidebar.html',
+    // '/Application/View/View/web/personnel/app/app.js'
+], function(
+    tpl
+){
+    return {
+        template: tpl,
+        data: function(){
+            return {
+                // isAdmin: Auth.isAdmin(),
+                // menuList: [
+                //     {
+                //         route: {
+                //             name: 'department'
+                //         },
+                //         name: '组织架构',
+                //         path: '/index?debug=6'
+                //     },
+                //     {
+                //         route: {
+                //             name: 'staff'
+                //         },
+                //         name: '员工管理',
+                //         path: '/staff?debug=6'
+                //     },
+                //     {
+                //         route: {
+                //             name: 'staff'
+                //         },
+                //         name: '员工管理',
+                //     },
+                //     {
+                //         route: {
+                //             name: 'staff'
+                //         },
+                //         name: '员工管理',
+                //         path: '1-2'
+                //     },
+                //     {
+                //         route: {
+                //             name: 'staff'
+                //         },
+                //         name: '员工管理',
+                //         path: '1-2'
+                //     },
+                //     {
+                //         route: {
+                //             name: 'staff'
+                //         },
+                //         name: '员工管理',
+                //         path: '1-2'
+                //     }
+                //
+                // ]
+            };
+        },
+        methods: {
+            handleOpen: function(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleClose: function(key, keyPath) {
+                console.log(key, keyPath);
+            }
+        }
+    };
+});

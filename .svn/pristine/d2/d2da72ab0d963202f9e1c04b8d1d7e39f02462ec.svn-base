@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <!--<title>Document</title>-->
+    <base href="/Application/View/View/web/personnel/">
+</head>
+<body>
+<div id="app">
+    <main-page></main-page>
+</div>
+<script src="/Application/View/View/vendor/requirejs/require.js"></script>
+<script src="/Application/View/View/web/common/config.js"></script>
+<script>
+    require(['department/department']);
+</script>
+<script src="https://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
+<script type="text/javascript" src="/Application/View/View/vendor/OrgChart-master/dist/js/jquery.mockjax.min.js"></script>
+<script type="text/javascript" src="/Application/View/View/vendor/OrgChart-master/dist/js/jquery.orgchart.min.js"></script>
+<!-- <script type="text/javascript" src="https://cdn.bootcss.com/jquery-orgchart/1.0.0/jquery.orgchart.min.js"></script> -->
+<script type="text/javascript">
+    // sample of core source code
+    // sample of core source code
+    var datascource = {
+        'name': 'Lao Lao',
+        'title': 'general manager',
+        // 'relationship': 001,
+        'children': [
+            { 'name': 'Bo Miao', 'title': 'department manager'/*, 'relationship': 110 */},
+            { 'name': 'Su Miao', 'title': 'department manager', /*'relationship': 111,
+*/      'children': [
+                { 'name': 'Tie Hua', 'title': 'senior engineer'/*, 'relationship': 110*/ },
+                { 'name': 'Hei Hei', 'title': 'senior engineer'/*, 'relationship': 110*/ }
+            ]
+            },
+            { 'name': 'Yu Jie', 'title': 'department manager'/*, 'relationship': 110*/ }
+        ]
+    };
+
+    $.mockjax({
+        url: '/orgchart/initdata',
+        responseTime: 1000,
+        contentType: 'application/json',
+        responseText: datascource
+    });
+
+    $('#chart-container').orgchart({
+        'data' : '/orgchart/initdata',
+        'nodeContent': 'title',
+        'toggleSiblingsResp': false,
+        'parentNodeSymbol': 'glyphicon glyphicon-th-large',
+    });
+
+
+
+
+    $(".orgchart").css({"background-image": "none"})
+
+</script>
+</body>
+</html>

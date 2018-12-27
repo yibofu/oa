@@ -1,0 +1,32 @@
+define([
+    'vue',
+    'vueRouter',
+    'ELEMENT',
+    'app/routes',
+    'staff/component/main',
+    'css!WebCommon/base.css',
+    'css!staff/component/main.css',
+    'css!vendor/element/index.css',
+
+], function(
+    Vue,
+    VueRouter,
+    ELEMENT,
+    routes,
+    MainPage
+){
+    Vue.use(ELEMENT);
+
+    var router = new VueRouter({
+        routes: routes
+    });
+
+    var app = new Vue({
+        components: {
+            MainPage: MainPage
+        },
+        router: router
+    });
+    app.$mount('#app');
+
+});

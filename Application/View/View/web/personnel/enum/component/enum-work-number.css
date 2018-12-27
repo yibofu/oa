@@ -1,0 +1,28 @@
+.enum-work-number{
+    position: relative;
+}
+.work-number-title{
+    width: 100%;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.out-frame{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    width: 50%;
+    margin: 0 auto;
+    border: 2px solid #ddd;
+    padding: 30px;
+    border-radius: 5px;
+    position: relative;
+}
+.frame-in{
+    width: 50%;
+}
+#enum-work-startVal input{
+    width: 140px;
+}

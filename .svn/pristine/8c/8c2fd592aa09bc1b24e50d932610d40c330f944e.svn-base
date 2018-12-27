@@ -1,0 +1,145 @@
+    <div v-if="isShow" class="add-social-security">
+    <div class="add-social-security-outline">
+        <div class="position-title" v-if="isCheck">社 保 档 案</div>
+        <div class="position-title" v-else>修 改 社 保 档 案</div>
+        <div class="line-in">
+            <span style="font-size: 16px;">姓 名: </span><span style="font-size: 16px;">{{archivesInfo.name}}</span>
+        </div>
+        <div class="line-in">
+            <span style="font-size: 16px;">工 号: </span><span style="font-size: 16px;">{{archivesInfo.unumber}}</span>
+        </div>
+        <div class="line-in">
+            <span style="font-size: 16px;">部 门: </span><span style="font-size: 16px;">{{archivesInfo.department_name}}</span>
+        </div>
+        <div class="line-all">
+            <span style="font-size: 16px;">证件号码: </span><span style="font-size: 16px;">{{archivesInfo.cardNumber}}</span>
+        </div>
+        <div class="line-all">
+            <div class="line-payLand">
+                <div class="span-style span-width-one">
+                    <span>社保缴纳地</span>
+                </div>
+                <el-input
+                        v-if="isCheck"
+                        :disabled="isCheck"
+                        class="archives-input-one"
+                        placeholder=""
+                        v-model="archivesInfo.payLand"
+                        clearable>
+                </el-input>
+                <v-distpicker
+                        v-else
+                        :province="province"
+                        :city="city"
+                        hide-area
+                        @province="onChangeProvince"
+                        @city="onChangeCity">
+                </v-distpicker>
+            </div>
+            <div class="line-householdType">
+                <div class="span-style span-width-two">
+                    <span>户口性质</span>
+                </div>
+                <el-select :disabled="isCheck" v-model="archivesInfo.householdType" class="archives-input-two" placeholder="">
+                    <el-option v-for="item in householdList" :label="item.householdType" :value="item.householdType"></el-option>
+                </el-select>
+            </div>
+        </div>
+
+        <div class="line-all">
+            <div class="span-style span-width-one">
+                <span>缴纳账户</span>
+            </div>
+            <div class="archives-input-two">
+                <el-select :disabled="isCheck" v-model="archivesInfo.payAccount" class="archives-input-two" placeholder="">
+                    <el-option v-for="item in payAccountList" :label="item.name" :value="item.id"></el-option>
+                </el-select>
+            </div>
+        </div>
+        <div class="line-one">
+            <div class="span-style span-width-one">
+                <span>社保基数</span>
+            </div>
+            <div style="width: 50%;display: inline-block">
+                <el-input
+                        :disabled="isCheck"
+                        class="archives-base"
+                        placeholder=""
+                        v-model="archivesInfo.payBase"
+                        clearable>
+                </el-input>
+            </div>
+        </div>
+        <div class="line-two">
+            <div class="span-style span-width-two">
+                <span>社保起始月</span>
+            </div>
+            <el-date-picker
+                    :disabled="isCheck"
+                    class="archives-input-time"
+                    value-format="yyyy-MM"
+                    v-model="archivesInfo.socialStarting"
+                    type="month"
+                    placeholder="">
+            </el-date-picker>
+        </div>
+        <div class="line-two">
+            <div class="span-style span-width-three">
+                <span>社保最后缴纳月</span>
+            </div>
+            <el-date-picker
+                    :disabled="isCheck"
+                    class="archives-input-time"
+                    value-format="yyyy-MM"
+                    v-model="archivesInfo.socialEnding"
+                    type="month"
+                    placeholder="">
+            </el-date-picker>
+        </div>
+        <div class="line-one">
+            <div class="span-style span-width-one">
+                <span>公积金基数</span>
+            </div>
+            <div style="width: 50%;display: inline-block">
+                <el-input
+                        :disabled="isCheck"
+                        class="archives-base"
+                        placeholder=""
+                        v-model="archivesInfo.foudBase"
+                        clearable>
+                </el-input>
+            </div>
+
+        </div>
+        <div class="line-two">
+            <div class="span-style span-width-two">
+                <span>公积金起始月</span>
+            </div>
+            <el-date-picker
+                    :disabled="isCheck"
+                    class="archives-input-time"
+                    value-format="yyyy-MM"
+                    v-model="archivesInfo.fundStarting"
+                    type="month"
+                    placeholder="">
+            </el-date-picker>
+        </div>
+        <div class="line-two">
+            <div class="span-style span-width-three">
+                <span>公积金最后缴纳月</span>
+            </div>
+            <el-date-picker
+                    :disabled="isCheck"
+                    value-format="yyyy-MM"
+                    v-model="archivesInfo.fundEnding"
+                    type="month"
+                    placeholder="">
+            </el-date-picker>
+        </div>
+        <div class="btn-place">
+            <el-button @click="checkBtn(0)" type="warning">取 消</el-button>
+            <el-button v-if="isCheck" @click="checkBtn(2)" type="primary">修 改</el-button>
+            <el-button v-else @click="checkBtn(1)" type="primary">保 存</el-button>
+        </div>
+    </div>
+</div>

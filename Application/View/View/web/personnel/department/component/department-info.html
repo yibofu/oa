@@ -1,0 +1,52 @@
+
+<div class="department-info-con">
+    <div style="position: absolute; width:100%; height: 100%;">
+        <div class="department-info-title">部门档案</div>
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+            <el-form-item class="departmentNumber" style="width: 80%;" label="部门编码" prop="department_number">
+                <el-input class="departmentList-number" :disabled="canChange" v-model="ruleForm.department_number" placeholder="部门编码"></el-input>
+            </el-form-item>
+            <el-form-item class="departmentName" style="width: 80%;" label="部门名称" prop="department_name">
+                <el-input class="departmentList-name" :disabled="canChange" v-model="ruleForm.department_name" placeholder="部门名称"></el-input>
+            </el-form-item>
+            <el-form-item  class="departmentHeader" style="width: 80%;" label="部门领导" prop="department_heads">
+                <el-input class="departmentList-heads" :disabled="canChange" v-model="ruleForm.department_heads" placeholder="部门领导"></el-input>
+            </el-form-item>
+            <el-form-item class="departmentUplevel" style="width: 80%;" label="上级分类" prop="pid">
+                <el-cascader
+                        v-model="pidTwo"
+                        :disabled="canChange"
+                        @change="givePid"
+                        placeholder="请选择所属部门"
+                        :options="departments"
+                        expand-trigger = 'hover'
+                        filterable
+                        clearable
+                        :show-all-levels="false"
+                        change-on-select
+                ></el-cascader>
+                <span style="color: #dc3b31">(不选默认为子公司)</span>
+            </el-form-item>
+            <el-form-item label="成立日期" required>
+                <el-col :span="11">
+                    <el-form-item>
+                        <el-date-picker
+                                :disabled="canChange"
+                                @change="timeChange"
+                                value-format="yyyy-MM-dd"
+                                style="z-index: 2000;"
+                                v-model="ruleForm.setup_time"
+                                type="date"
+                                placeholder="选择日期时间">
+                        </el-date-picker>
+                        <div v-show="hasTime" class="el-form-item__error border-line" style="width: 100px;height: 20px;">请选择成立日期</div>
+                    </el-form-item>
+                </el-col>
+            </el-form-item>
+            <el-button v-if="whichBtns==0||whichBtns==3||whichBtns==4" style="margin-left: 100px;" type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+            <el-button v-if="whichBtns==2" style="margin-left: 100px;" type="primary" @click="doEdit('ruleForm')">确认修改</el-button>
+            <el-button v-if="whichBtns==1" style="margin-left: 100px;" type="primary" @click="changeToEdit">修改</el-button>
+            <el-button v-if="whichBtns!=1" type="warning" @click="resetForm('ruleForm')">重置</el-button>
+        </el-form>
+    </div>
+</div>

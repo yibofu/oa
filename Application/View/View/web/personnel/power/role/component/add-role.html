@@ -1,0 +1,16 @@
+<div v-if="isShow" class="add-position">
+    <div class="add-position-outline">
+        <div class="position-title">新 增 角 色</div>
+        <span>角色名称</span>
+        <el-input
+                class="position-input"
+                placeholder="请输入内容"
+                v-model="roleInfo.role_name"
+                clearable>
+        </el-input>
+        <div class="btn-place">
+            <el-button @click="checkBtn(0)">取 消</el-button>
+            <el-button @click="checkBtn(1)" type="primary">保 存</el-button>
+        </div>
+    </div>
+</div>

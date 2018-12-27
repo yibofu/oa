@@ -1,0 +1,40 @@
+<div v-if="isShow" class="add-bill">
+    <div class="add-bill-outline">
+        <div class="bill-title">新 建 台 账</div>
+        <div style="float: left; line-height: 40px;margin-right: 5px;"><span>月度</span></div>
+        <div style="">
+            <div class="bill-input">
+                <el-date-picker
+                        value-format="yyyy-MM"
+                        v-model="billInfo.month1"
+                        type="month"
+                        placeholder="请选择创建月度">
+                </el-date-picker>
+            </div>
+            <div style="clear: both"></div>
+        </div>
+        <div class="checkbox-is">
+            <el-checkbox v-model="checked">以上个月台账为模板</el-checkbox>
+            <br>
+            <el-checkbox v-model="checked">以系统最新设置为模板</el-checkbox>
+            <br>
+            <el-checkbox v-model="checked">导入</el-checkbox>
+        </div>
+        <div><span class="bill-word-color">导入文件为xls,xlsx格式，导入文件必须与模板一致，导入的文件不可有外部链接</span></div>
+        <div style="position: relative; margin-top: 10px; margin-bottom: 15px;">
+            <div style="float: left; line-height: 40px;margin-right: 5px;"><span>文件名</span></div>
+            <div style="position: relative;width: 40%; float: left; margin-right: 15px;">
+                <el-input style="width: 100%;" v-model="billInfo.bill" placeholder=""></el-input>
+                <input @change="uploadResume" type="file" class="file">
+            </div>
+            <el-button @click="" icon="el-icon-document" type="primary">浏览</el-button>
+            <el-button @click="" icon="el-icon-upload" type="success">开始导入</el-button>
+            <el-button @click="" icon="el-icon-download" type="warning">下载模板</el-button>
+            <div style="clear: both;"></div>
+        </div>
+        <div class="btn-place">
+            <el-button @click="checkBtn(0)" type="warning">取 消</el-button>
+            <el-button @click="checkBtn(1)" type="primary">保 存</el-button>
+        </div>
+    </div>
+</div>

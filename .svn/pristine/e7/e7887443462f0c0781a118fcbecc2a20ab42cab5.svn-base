@@ -1,0 +1,27 @@
+<div>
+    <el-row class="tac siderow">
+        <el-col :span="24" class="sidecol">
+            <el-menu default-active="2"
+                     class="el-menu-vertical-demo"
+                     default-openeds="['1']"
+                     default-active="['1-1']"
+                     @open="handleOpen"
+                     @close="handleClose">
+                <el-submenu index="1">
+                    <template slot="title">
+                        <i class="el-icon-location"></i>
+                        <span>人事管理</span>
+                    </template>
+                    <el-menu-item index="1-1">组织架构</el-menu-item>
+                    <el-menu-item index="1-2">员工管理</el-menu-item>
+                    <el-menu-item index="1-3">社保管理</el-menu-item>
+                    <el-menu-item index="1-4">考勤/假期管理</el-menu-item>
+                    <el-menu-item index="1-5">绩效管理</el-menu-item>
+                    <el-menu-item index="1-6">招聘管理</el-menu-item>
+                </el-submenu>
+
+            </el-menu>
+        </el-col>
+
+    </el-row>
+</div>
